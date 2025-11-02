@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 
 interface InputAreaProps {
@@ -66,7 +65,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     }
 
     return (
-        <form onSubmit={handleFormSubmit} className="bg-base-200/60 border border-white/10 rounded-xl p-6 md:p-8 space-y-6 shadow-2xl shadow-black/20 backdrop-blur-md">
+        <form onSubmit={handleFormSubmit} className="bg-base-200/60 border border-white/10 rounded-xl p-6 md:p-8 space-y-6 shadow-2xl shadow-black/20 backdrop-blur-md animate-[slideUp_1s_ease-out]">
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
                 <div className="flex-1">
                     <label 
@@ -110,7 +109,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                             value={productUrl}
                             onChange={(e) => setProductUrl(e.target.value)}
                             placeholder="https://sua-loja.com/produto"
-                            className="w-full pl-10 pr-4 py-3 bg-base-300 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition duration-200"
+                            className="w-full pl-10 pr-4 py-3 bg-base-300 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary focus:shadow-inner focus:bg-base-200 outline-none transition duration-200"
                         />
                     </div>
                 </div>
@@ -119,7 +118,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
             <button
                 type="submit"
                 disabled={isLoading || (!imageFile && !productUrl)}
-                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 disabled:from-base-300 disabled:to-base-300 disabled:text-text-secondary disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/50 disabled:animate-none animate-pulse-glow"
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 disabled:from-base-300 disabled:to-base-300 disabled:text-text-secondary disabled:cursor-not-allowed transform hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-primary/40 active:scale-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/50 disabled:animate-none animate-pulse-glow"
             >
                 {isLoading ? 'Gerando Mágica...' : 'Gerar Conteúdo com IA'}
                 {!isLoading && (

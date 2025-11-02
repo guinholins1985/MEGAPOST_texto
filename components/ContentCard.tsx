@@ -1,23 +1,22 @@
+import React, { useState, useMemo } from 'react';
+import { Modal } from './Modal';
 
-import React, { useState } from 'react';
-
-interface ContentCardProps {
-    title: string;
-    data: any;
-}
-
-const ClipboardIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-    <path strokeLinecap="round" strokeLinejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v3.042m-7.416 0v3.042c0 .212.03.418.084.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-  </svg>
+// Icons
+const ClipboardIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75" /></svg>
 );
-
+const DuplicateIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376H3.375A1.125 1.125 0 0 1 2.25 19.5V6.375c0-.621.504-1.125 1.125-1.125h9.75c.621 0 1.125.504 1.125 1.125v9.75z" /></svg>
+);
+const ZoomIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607ZM10.5 7.5v6m3-3h-6" /></svg>
+);
+const DownloadIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+);
 const CheckIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-        <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
 );
-
 
 const formatDataForCopy = (data: any): string => {
     if (Array.isArray(data)) {
@@ -34,30 +33,60 @@ const formatDataForCopy = (data: any): string => {
     return String(data);
 };
 
+interface ContentCardProps {
+    title: string;
+    data: any;
+}
+
+const ActionButton: React.FC<{ tooltip: string, onClick: () => void, children: React.ReactNode }> = ({ tooltip, onClick, children }) => (
+    <div className="relative group">
+        <button onClick={onClick} className="p-1.5 rounded-full text-text-secondary hover:bg-base-100/50 hover:text-text-primary transition-colors">
+            {children}
+        </button>
+        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-base-100 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            {tooltip}
+        </div>
+    </div>
+);
 
 export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
-    const [copied, setCopied] = useState(false);
+    const [copiedTooltip, setCopiedTooltip] = useState('Copiar');
+    const [isZoomed, setIsZoomed] = useState(false);
+    const textToCopy = useMemo(() => formatDataForCopy(data), [data]);
 
-    const handleCopy = () => {
-        const textToCopy = formatDataForCopy(data);
+    const handleCopy = (tooltipText: string) => {
         navigator.clipboard.writeText(textToCopy);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+        setCopiedTooltip(tooltipText);
+        setTimeout(() => setCopiedTooltip('Copiar'), 2000);
     };
-    
-    const renderContent = () => {
+
+    const handleDownload = () => {
+        const blob = new Blob([textToCopy], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.replace(/ /g, '_').toLowerCase()}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    };
+
+    const renderContent = (isModal: boolean = false) => {
         if (!data || (Array.isArray(data) && data.length === 0)) {
             return <p className="text-text-secondary italic">Nenhum conteúdo gerado.</p>;
         }
+        
+        const textSize = isModal ? 'text-base' : 'text-sm';
 
         if (Array.isArray(data)) {
             return (
-                <ul className="space-y-3 text-sm">
+                <ul className={`space-y-4 ${textSize}`}>
                     {data.map((item, index) => (
                         <li key={index} className="text-text-primary bg-base-200/50 p-3 rounded-md border border-white/10">
                            {typeof item === 'string' && <p>{item}</p>}
                            {typeof item === 'object' && item !== null && (
-                               <div className="space-y-1">
+                               <div className="space-y-1.5">
                                    {Object.entries(item).map(([key, value]) => (
                                        <div key={key}>
                                            <strong className="font-semibold text-sky-400 capitalize">{key}: </strong>
@@ -71,24 +100,36 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
                 </ul>
             );
         }
-        return <p className="text-sm">{String(data)}</p>;
+        return <p className={textSize}>{String(data)}</p>;
     };
 
     return (
-        <div className="bg-base-300/40 rounded-lg p-4 flex flex-col h-full border border-white/10">
-            <div className="flex justify-between items-center mb-4">
-                <h4 className="font-bold text-md text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-slate-400">{title}</h4>
-                <button
-                    onClick={handleCopy}
-                    className={`px-3 py-1 text-xs font-medium rounded-full flex items-center gap-1.5 transition-all duration-200 ${copied ? 'bg-green-500/80 text-white' : 'bg-base-300 hover:bg-brand-primary text-text-primary'}`}
-                >
-                    {copied ? <CheckIcon/> : <ClipboardIcon />}
-                    {copied ? 'Copiado!' : 'Copiar'}
-                </button>
+        <>
+            <div className="bg-base-300/40 rounded-lg p-4 flex flex-col h-full border border-white/10 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20">
+                <div className="flex justify-between items-start mb-3">
+                    <h4 className="font-bold text-md text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-slate-400 pr-2">{title}</h4>
+                    <div className="flex items-center space-x-1 flex-shrink-0">
+                        <ActionButton tooltip={copiedTooltip} onClick={() => handleCopy('Copiado!')}>
+                             {copiedTooltip === 'Copiado!' ? <CheckIcon/> : <ClipboardIcon className="w-5 h-5"/> }
+                        </ActionButton>
+                        <ActionButton tooltip="Duplicar" onClick={() => handleCopy('Duplicado!')}>
+                             {copiedTooltip === 'Duplicado!' ? <CheckIcon/> : <DuplicateIcon className="w-5 h-5"/> }
+                        </ActionButton>
+                        <ActionButton tooltip="Zoom" onClick={() => setIsZoomed(true)}>
+                            <ZoomIcon className="w-5 h-5" />
+                        </ActionButton>
+                        <ActionButton tooltip="Download .txt" onClick={handleDownload}>
+                            <DownloadIcon className="w-5 h-5" />
+                        </ActionButton>
+                    </div>
+                </div>
+                <div className="flex-grow max-h-80 overflow-y-auto pr-2">
+                    {renderContent()}
+                </div>
             </div>
-            <div className="flex-grow max-h-80 overflow-y-auto pr-2">
-                {renderContent()}
-            </div>
-        </div>
+            <Modal isOpen={isZoomed} onClose={() => setIsZoomed(false)} title={title}>
+                {renderContent(true)}
+            </Modal>
+        </>
     );
 };

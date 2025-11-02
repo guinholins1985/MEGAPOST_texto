@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { GeneratedContent, ContentCategory } from '../types';
 import { CONTENT_CATEGORIES } from '../constants';
@@ -10,7 +9,7 @@ interface ResultsDisplayProps {
 
 const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedContent, isOpen: boolean, onToggle: () => void }> = ({ category, content, isOpen, onToggle }) => {
     return (
-        <div className="border border-white/10 bg-base-200/50 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300">
+        <div className="border border-white/10 bg-base-200/50 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300 transform hover:scale-[1.02] hover:border-white/20 shadow-lg shadow-black/20">
             <h3>
                 <button
                     onClick={onToggle}

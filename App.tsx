@@ -39,7 +39,7 @@ const App: React.FC = () => {
             <Header />
             <main className="container mx-auto px-4 py-8 md:py-16">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-300 to-purple-400 mb-4 animate-[fadeIn_1s_ease-out]">
+                    <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-brand-primary to-brand-secondary mb-4 animate-[fadeIn_1s_ease-out]">
                         Crie Conteúdo de Marketing em Segundos
                     </h1>
                     <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-10 animate-[fadeIn_1.5s_ease-out]">
@@ -52,7 +52,7 @@ const App: React.FC = () => {
                         {isLoading && <Loader />}
 
                         {error && (
-                            <div className="mt-8 text-center bg-red-900/30 border border-red-700 text-red-300 px-4 py-3 rounded-lg animate-fadeIn" role="alert">
+                            <div className="mt-8 text-center bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded-lg animate-fadeIn" role="alert">
                                 <strong className="font-bold">Oops! Algo deu errado: </strong>
                                 <span className="block sm:inline">{error}</span>
                             </div>
@@ -60,7 +60,7 @@ const App: React.FC = () => {
 
                         {generatedContent && !isLoading && (
                              <div key={generationId} className="animate-fadeIn">
-                               <h2 className="text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500">
+                               <h2 className="text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-violet-600">
                                    Seu Conteúdo Mágico está Pronto!
                                </h2>
                                 <ResultsDisplay content={generatedContent} />

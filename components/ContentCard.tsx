@@ -40,10 +40,10 @@ interface ContentCardProps {
 
 const ActionButton: React.FC<{ tooltip: string, onClick: () => void, children: React.ReactNode }> = ({ tooltip, onClick, children }) => (
     <div className="relative group">
-        <button onClick={onClick} className="p-1.5 rounded-full text-text-secondary hover:bg-base-100/50 hover:text-text-primary transition-colors">
+        <button onClick={onClick} className="p-1.5 rounded-full text-text-secondary hover:bg-slate-200 hover:text-text-primary transition-colors">
             {children}
         </button>
-        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-base-100 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
             {tooltip}
         </div>
     </div>
@@ -83,13 +83,13 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
             return (
                 <ul className={`space-y-4 ${textSize}`}>
                     {data.map((item, index) => (
-                        <li key={index} className="text-text-primary bg-base-200/50 p-3 rounded-md border border-white/10">
+                        <li key={index} className="text-text-primary bg-base-200 p-3 rounded-md border border-base-300">
                            {typeof item === 'string' && <p>{item}</p>}
                            {typeof item === 'object' && item !== null && (
                                <div className="space-y-1.5">
                                    {Object.entries(item).map(([key, value]) => (
                                        <div key={key}>
-                                           <strong className="font-semibold text-sky-400 capitalize">{key}: </strong>
+                                           <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
                                            <span className="text-text-secondary">{String(value)}</span>
                                        </div>
                                    ))}
@@ -105,9 +105,9 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
 
     return (
         <>
-            <div className="bg-base-300/40 rounded-lg p-4 flex flex-col h-full border border-white/10 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/30 hover:border-white/20">
+            <div className="bg-slate-50/70 rounded-lg p-4 flex flex-col h-full border border-base-300 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-300/50 hover:border-slate-300">
                 <div className="flex justify-between items-start mb-3">
-                    <h4 className="font-bold text-md text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-slate-400 pr-2">{title}</h4>
+                    <h4 className="font-bold text-md text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-800 pr-2">{title}</h4>
                     <div className="flex items-center space-x-1 flex-shrink-0">
                         <ActionButton tooltip={copiedTooltip} onClick={() => handleCopy('Copiado!')}>
                              {copiedTooltip === 'Copiado!' ? <CheckIcon/> : <ClipboardIcon className="w-5 h-5"/> }

@@ -9,11 +9,11 @@ interface ResultsDisplayProps {
 
 const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedContent, isOpen: boolean, onToggle: () => void }> = ({ category, content, isOpen, onToggle }) => {
     return (
-        <div className="border border-white/10 bg-base-200/50 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300 transform hover:scale-[1.02] hover:border-white/20 shadow-lg shadow-black/20">
+        <div className="border border-base-300 bg-base-200 rounded-lg overflow-hidden transition-all duration-300 transform hover:scale-[1.02] hover:border-slate-300 shadow-lg shadow-slate-200/60">
             <h3>
                 <button
                     onClick={onToggle}
-                    className="flex justify-between items-center w-full p-5 font-semibold text-left text-lg text-text-primary hover:bg-white/5 transition-colors"
+                    className="flex justify-between items-center w-full p-5 font-semibold text-left text-lg text-text-primary hover:bg-slate-50 transition-colors"
                     aria-expanded={isOpen}
                 >
                     <span>{category.title}</span>
@@ -24,7 +24,7 @@ const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedCon
               className={`grid transition-all duration-500 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
             >
               <div className="overflow-hidden">
-                <div className="p-5 border-t border-white/10">
+                <div className="p-5 border-t border-base-300">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {category.items.map((item) => {
                              const data = item.accessor(content);

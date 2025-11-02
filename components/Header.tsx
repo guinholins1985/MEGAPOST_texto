@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const SparklesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
@@ -9,12 +8,12 @@ const SparklesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
 
 export const Header: React.FC = () => {
     return (
-        <header className="bg-base-200/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+        <header className="bg-base-200/80 backdrop-blur-lg border-b border-base-300 sticky top-0 z-50">
             <div className="container mx-auto px-4 py-4">
                 <div className="flex items-center">
                     <SparklesIcon className="w-8 h-8 text-brand-secondary mr-3"/>
-                    <h1 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-brand-secondary">
-                        Conteúdo Mágico AI
+                    <h1 className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-secondary">
+                        MEGAPOST
                     </h1>
                 </div>
             </div>

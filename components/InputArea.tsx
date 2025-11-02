@@ -65,7 +65,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     }
 
     return (
-        <form onSubmit={handleFormSubmit} className="bg-base-200/60 border border-white/10 rounded-xl p-6 md:p-8 space-y-6 shadow-2xl shadow-black/20 backdrop-blur-md animate-[slideUp_1s_ease-out]">
+        <form onSubmit={handleFormSubmit} className="bg-base-200 border border-base-300 rounded-xl p-6 md:p-8 space-y-6 shadow-xl shadow-slate-200/70 animate-[slideUp_1s_ease-out]">
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
                 <div className="flex-1">
                     <label 
@@ -80,13 +80,13 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                         <input type="file" id="file-upload" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} />
                         {imageUrl ? (
                             <div className="text-center relative z-10">
-                               <img src={imageUrl} alt="Preview" className="max-h-40 rounded-lg object-contain shadow-lg"/>
-                               <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-accent hover:underline">Trocar imagem</button>
+                               <img src={imageUrl} alt="Preview" className="max-h-40 rounded-lg object-contain shadow-md"/>
+                               <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-primary hover:underline">Trocar imagem</button>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center text-center relative z-10">
                                 <UploadIcon className="w-12 h-12 text-text-secondary mb-3 group-hover:text-brand-primary transition-colors"/>
-                                <p className="font-semibold">Arraste a imagem do produto aqui</p>
+                                <p className="font-semibold text-text-primary">Arraste a imagem do produto aqui</p>
                                 <p className="text-sm text-text-secondary">ou clique para selecionar (Max 4MB)</p>
                             </div>
                         )}
@@ -109,7 +109,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                             value={productUrl}
                             onChange={(e) => setProductUrl(e.target.value)}
                             placeholder="https://sua-loja.com/produto"
-                            className="w-full pl-10 pr-4 py-3 bg-base-300 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary focus:shadow-inner focus:bg-base-200 outline-none transition duration-200"
+                            className="w-full pl-10 pr-4 py-3 bg-slate-100 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary focus:shadow-inner focus:bg-base-200 outline-none transition duration-200"
                         />
                     </div>
                 </div>
@@ -118,7 +118,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
             <button
                 type="submit"
                 disabled={isLoading || (!imageFile && !productUrl)}
-                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 disabled:from-base-300 disabled:to-base-300 disabled:text-text-secondary disabled:cursor-not-allowed transform hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-primary/40 active:scale-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/50 disabled:animate-none animate-pulse-glow"
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transform hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-primary/40 active:scale-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/50 disabled:animate-none animate-pulse-glow"
             >
                 {isLoading ? 'Gerando Mágica...' : 'Gerar Conteúdo com IA'}
                 {!isLoading && (

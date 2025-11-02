@@ -2,10 +2,24 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { GeneratedContent } from '../types';
 
+// Gemini has a 4MB limit for image uploads.
+const MAX_FILE_SIZE = 4 * 1024 * 1024; 
+
 const fileToGenerativePart = async (file: File) => {
-    const base64EncodedDataPromise = new Promise<string>((resolve) => {
+    if (file.size > MAX_FILE_SIZE) {
+        throw new Error("O arquivo de imagem excede o limite de 4MB.");
+    }
+
+    const base64EncodedDataPromise = new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => resolve((reader.result as string).split(',')[1]);
+        reader.onloadend = () => {
+            if (reader.result) {
+                resolve((reader.result as string).split(',')[1]);
+            } else {
+                reject(new Error("Falha ao ler o arquivo."));
+            }
+        };
+        reader.onerror = (error) => reject(error);
         reader.readAsDataURL(file);
     });
     return {
@@ -15,16 +29,17 @@ const fileToGenerativePart = async (file: File) => {
 
 const buildPrompt = async (image: File | null, url: string) => {
     const promptParts: any[] = [
-        { text: "Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser profissional, criativo e otimizado para vendas. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Siga estritamente o schema JSON fornecido." }
+        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Siga estritamente o schema JSON fornecido para a sua resposta." }
     ];
 
     if (image) {
         const imagePart = await fileToGenerativePart(image);
         promptParts.push(imagePart);
+        promptParts.push({ text: "\nEste é a imagem do produto." });
     }
     
     if (url) {
-        promptParts.push({ text: `\nURL do Produto para referência (use seu conhecimento para analisá-lo): ${url}` });
+        promptParts.push({ text: `\nAnalise também a URL do produto: ${url}` });
     }
 
     return promptParts;
@@ -36,57 +51,57 @@ const getResponseSchema = () => ({
         seoAndBlog: {
             type: Type.OBJECT,
             properties: {
-                seoTitles: { type: Type.ARRAY, items: { type: Type.STRING } },
-                persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING } },
-                seoTags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                metaTagsAndAltText: { type: Type.ARRAY, items: { type: Type.STRING } },
-                faq: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { question: { type: Type.STRING }, answer: { type: Type.STRING } } } },
-                longTailKeywords: { type: Type.ARRAY, items: { type: Type.STRING } },
-                seoBlogPosts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } } },
-                metaDescriptions: { type: Type.ARRAY, items: { type: Type.STRING } },
+                seoTitles: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos otimizados para SEO (10–15)" },
+                persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições persuasivas com benefícios (2–5)" },
+                seoTags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Tags SEO relevantes (20–30)" },
+                metaTagsAndAltText: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Meta tags e alt text para imagens (5–10)" },
+                faq: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { question: { type: Type.STRING }, answer: { type: Type.STRING } } }, description: "Perguntas frequentes (FAQ) automáticas (5–10)" },
+                longTailKeywords: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Keywords long-tail sugeridas (10–15)" },
+                seoBlogPosts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Artigos para blog otimizados para SEO (1–2)" },
+                metaDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Meta descriptions otimizadas (3-5)" },
             },
         },
         socialMediaAndEngagement: {
             type: Type.OBJECT,
             properties: {
-                popularHashtags: { type: Type.ARRAY, items: { type: Type.STRING } },
-                socialMediaPosts: { type: Type.ARRAY, items: { type: Type.STRING } },
-                shortVideoScripts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, script: { type: Type.STRING } } } },
-                instagramBio: { type: Type.ARRAY, items: { type: Type.STRING } },
-                viralPhrases: { type: Type.ARRAY, items: { type: Type.STRING } },
-                instagramCaptions: { type: Type.ARRAY, items: { type: Type.STRING } },
-                tweets: { type: Type.ARRAY, items: { type: Type.STRING } },
-                facebookGroupPosts: { type: Type.ARRAY, items: { type: Type.STRING } },
+                popularHashtags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Hashtags populares (20–30)" },
+                socialMediaPosts: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases para postagens em redes sociais (10–15)" },
+                shortVideoScripts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, script: { type: Type.STRING } } }, description: "Scripts para vídeos curtos (Reels/TikTok) (2–3)" },
+                instagramBio: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Bio para Instagram/TikTok (1–3)" },
+                viralPhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases virais (5–10)" },
+                instagramCaptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Legendas para posts no Instagram (3–5)" },
+                tweets: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Tweets prontos (3-5)" },
+                facebookGroupPosts: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Postagens para grupos no Facebook (2–3)" },
             },
         },
         copywritingAndAdvertising: {
             type: Type.OBJECT,
             properties: {
-                promotionalSalePhrases: { type: Type.ARRAY, items: { type: Type.STRING } },
-                paidAdCopy: { type: Type.ARRAY, items: { type: Type.STRING } },
-                slogans: { type: Type.ARRAY, items: { type: Type.STRING } },
-                catchyHeadlines: { type: Type.ARRAY, items: { type: Type.STRING } },
-                ctas: { type: Type.ARRAY, items: { type: Type.STRING } },
-                alternativeAdTitles: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { tone: { type: Type.STRING }, title: { type: Type.STRING } } } },
-                technicalDescriptions: { type: Type.ARRAY, items: { type: Type.STRING } },
-                benefitsVsFeatures: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { feature: { type: Type.STRING }, benefit: { type: Type.STRING } } } },
-                remarketingPhrases: { type: Type.ARRAY, items: { type: Type.STRING } },
+                promotionalSalePhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases promocionais de venda (10–15)" },
+                paidAdCopy: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Copy para anúncios pagos (5–10)" },
+                slogans: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Slogans publicitários (5–10)" },
+                catchyHeadlines: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos (10–15)" },
+                ctas: { type: Type.ARRAY, items: { type: Type.STRING }, description: "CTA automático (5–10)" },
+                alternativeAdTitles: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { tone: { type: Type.STRING, description: "Tom do anúncio (ex: urgente, emocional, racional)" }, title: { type: Type.STRING } } }, description: "Títulos alternativos para anúncios (3-5)" },
+                technicalDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições técnicas detalhadas (1-2)" },
+                benefitsVsFeatures: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { feature: { type: Type.STRING }, benefit: { type: Type.STRING } } }, description: "Benefícios vs. recursos" },
+                remarketingPhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases para campanhas de remarketing (3–5)" },
             },
         },
         emailMarketingAndAutomation: {
             type: Type.OBJECT,
             properties: {
-                personalizedMarketingEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } } },
-                welcomeEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } } },
-                abandonedCartEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } } },
-                newsletters: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } } },
+                personalizedMarketingEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "E-mails marketing personalizados (2–3)" },
+                welcomeEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "E-mail de boas-vindas automatizado (1–2)" },
+                abandonedCartEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "E-mails de recuperação de carrinho abandonado (2-3)" },
+                newsletters: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "Newsletters semanais (1-2)" },
             },
         },
         other: {
             type: Type.OBJECT,
             properties: {
-                fakeTestimonials: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { author: { type: Type.STRING }, text: { type: Type.STRING } } } },
-                purchaseGuides: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } } },
+                fakeTestimonials: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { author: { type: Type.STRING }, text: { type: Type.STRING } } }, description: "Depoimentos fictícios gerados por IA (2–3)" },
+                purchaseGuides: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Guias de compra comparativos (1–2)" },
             },
         },
     },
@@ -94,14 +109,14 @@ const getResponseSchema = () => ({
 
 export const generateProductContent = async (image: File | null, url: string): Promise<GeneratedContent> => {
     if (!process.env.API_KEY) {
-        throw new Error("API key is not configured.");
+        throw new Error("API key não está configurada.");
     }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
     const promptParts = await buildPrompt(image, url);
 
     const response = await ai.models.generateContent({
-        model: 'gemini-2.5-pro',
+        model: 'gemini-2.5-flash',
         contents: { parts: promptParts },
         config: {
             responseMimeType: "application/json",
@@ -113,9 +128,14 @@ export const generateProductContent = async (image: File | null, url: string): P
 
     try {
         const jsonText = response.text.trim();
-        return JSON.parse(jsonText) as GeneratedContent;
+        // Sanitize the response to remove potential markdown code block fences
+        const sanitizedJsonText = jsonText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+        return JSON.parse(sanitizedJsonText) as GeneratedContent;
     } catch (e) {
-        console.error("Failed to parse JSON response:", response.text);
-        throw new Error("A resposta da IA não estava no formato JSON esperado.");
+        console.error("Falha ao analisar a resposta JSON:", response.text);
+        if (e instanceof SyntaxError) {
+             throw new Error("A resposta da IA não estava em um formato JSON válido. Isso pode ser um problema temporário. Tente novamente.");
+        }
+        throw new Error("Ocorreu um erro inesperado ao processar a resposta da IA.");
     }
 };

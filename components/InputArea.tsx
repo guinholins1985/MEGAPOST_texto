@@ -8,16 +8,15 @@ interface InputAreaProps {
 
 const UploadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 16.5V9.75m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
     </svg>
 );
 
 const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
     </svg>
 );
-
 
 export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) => {
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -28,6 +27,10 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     const handleFileChange = (files: FileList | null) => {
         if (files && files[0]) {
             const file = files[0];
+            if (file.size > 4 * 1024 * 1024) { // 4MB size limit
+                alert("O arquivo de imagem é muito grande. Por favor, use um arquivo com menos de 4MB.");
+                return;
+            }
             setImageFile(file);
             setImageUrl(URL.createObjectURL(file));
         }
@@ -52,7 +55,6 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
         }
     }, []);
 
-
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onGenerate(imageFile, productUrl);
@@ -64,45 +66,52 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     }
 
     return (
-        <form onSubmit={handleFormSubmit} className="bg-base-200 border border-base-300 rounded-xl p-6 md:p-8 space-y-6 shadow-lg">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                <div 
-                    onDragEnter={handleDrag} 
-                    onDragLeave={handleDrag} 
-                    onDragOver={handleDrag} 
-                    onDrop={handleDrop} 
-                    className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg transition-colors duration-200 ${dragActive ? 'border-brand-secondary bg-brand-dark/20' : 'border-base-300 hover:border-brand-secondary'}`}
-                >
-                    <input type="file" id="file-upload" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} />
-                    {imageUrl ? (
-                        <>
-                           <img src={imageUrl} alt="Preview" className="max-h-48 rounded-lg object-contain"/>
-                           <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-secondary hover:underline">Remover imagem</button>
-                        </>
-                    ) : (
-                        <label htmlFor="file-upload" className="flex flex-col items-center justify-center text-center cursor-pointer">
-                            <UploadIcon className="w-12 h-12 text-text-secondary mb-3"/>
-                            <p className="font-semibold">Arraste e solte uma imagem do produto</p>
-                            <p className="text-sm text-text-secondary">ou clique para selecionar</p>
-                        </label>
-                    )}
+        <form onSubmit={handleFormSubmit} className="bg-base-200/60 border border-white/10 rounded-xl p-6 md:p-8 space-y-6 shadow-2xl shadow-black/20 backdrop-blur-md">
+            <div className="flex flex-col md:flex-row gap-6 items-stretch">
+                <div className="flex-1">
+                    <label 
+                        htmlFor="file-upload" 
+                        onDragEnter={handleDrag} 
+                        onDragLeave={handleDrag} 
+                        onDragOver={handleDrag} 
+                        onDrop={handleDrop}
+                        className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg h-full transition-all duration-300 group cursor-pointer ${dragActive ? 'border-brand-primary bg-brand-primary/10' : 'border-base-300 hover:border-brand-primary'}`}
+                    >
+                         <div className={`absolute inset-0 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg opacity-0 transition-opacity duration-300 ${dragActive ? 'opacity-20' : 'group-hover:opacity-10'}`}></div>
+                        <input type="file" id="file-upload" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} />
+                        {imageUrl ? (
+                            <div className="text-center relative z-10">
+                               <img src={imageUrl} alt="Preview" className="max-h-40 rounded-lg object-contain shadow-lg"/>
+                               <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-accent hover:underline">Trocar imagem</button>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-center relative z-10">
+                                <UploadIcon className="w-12 h-12 text-text-secondary mb-3 group-hover:text-brand-primary transition-colors"/>
+                                <p className="font-semibold">Arraste a imagem do produto aqui</p>
+                                <p className="text-sm text-text-secondary">ou clique para selecionar (Max 4MB)</p>
+                            </div>
+                        )}
+                    </label>
+                </div>
+                
+                <div className="flex items-center justify-center md:flex-col">
+                  <div className="h-full md:h-auto w-px md:w-full bg-base-300"></div>
+                  <span className="mx-4 md:my-2 text-sm font-bold text-text-secondary">OU</span>
+                  <div className="h-full md:h-auto w-px md:w-full bg-base-300"></div>
                 </div>
 
-                <div className="flex flex-col h-full justify-center space-y-4">
-                     <p className="text-center text-text-secondary font-semibold text-lg">OU</p>
-                    <div>
-                        <label htmlFor="product-url" className="block text-sm font-medium mb-2">Cole o link do produto</label>
-                        <div className="relative">
-                            <LinkIcon className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary"/>
-                            <input
-                                id="product-url"
-                                type="url"
-                                value={productUrl}
-                                onChange={(e) => setProductUrl(e.target.value)}
-                                placeholder="https://exemplo.com/produto"
-                                className="w-full pl-10 pr-4 py-2 bg-base-300 border border-base-300 rounded-md focus:ring-2 focus:ring-brand-secondary focus:border-brand-secondary outline-none transition"
-                            />
-                        </div>
+                <div className="flex-1 flex flex-col justify-center">
+                    <label htmlFor="product-url" className="block text-sm font-medium mb-2 text-left">Cole o link do produto</label>
+                    <div className="relative">
+                        <LinkIcon className="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-text-secondary"/>
+                        <input
+                            id="product-url"
+                            type="url"
+                            value={productUrl}
+                            onChange={(e) => setProductUrl(e.target.value)}
+                            placeholder="https://sua-loja.com/produto"
+                            className="w-full pl-10 pr-4 py-3 bg-base-300 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition duration-200"
+                        />
                     </div>
                 </div>
             </div>
@@ -110,11 +119,11 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
             <button
                 type="submit"
                 disabled={isLoading || (!imageFile && !productUrl)}
-                className="w-full flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-dark text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 disabled:bg-base-300 disabled:text-text-secondary disabled:cursor-not-allowed transform hover:scale-105 disabled:transform-none"
+                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 disabled:from-base-300 disabled:to-base-300 disabled:text-text-secondary disabled:cursor-not-allowed transform hover:scale-[1.02] active:scale-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/50 disabled:animate-none animate-pulse-glow"
             >
-                {isLoading ? 'Gerando...' : 'Gerar Conteúdo Mágico'}
+                {isLoading ? 'Gerando Mágica...' : 'Gerar Conteúdo com IA'}
                 {!isLoading && (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path d="m3.1 1.2.9-1.1 12.3 10-12.3 10-.9-1.2 11-8.8-11-8.9Z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clipRule="evenodd" /></svg>
                 )}
             </button>
         </form>

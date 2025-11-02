@@ -10,19 +10,22 @@ interface ResultsDisplayProps {
 
 const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedContent, isOpen: boolean, onToggle: () => void }> = ({ category, content, isOpen, onToggle }) => {
     return (
-        <div className="border border-base-300 bg-base-200 rounded-lg overflow-hidden">
+        <div className="border border-white/10 bg-base-200/50 rounded-lg overflow-hidden backdrop-blur-sm transition-all duration-300">
             <h3>
                 <button
                     onClick={onToggle}
-                    className="flex justify-between items-center w-full p-5 font-medium text-left text-text-primary hover:bg-base-300/50 transition-colors"
+                    className="flex justify-between items-center w-full p-5 font-semibold text-left text-lg text-text-primary hover:bg-white/5 transition-colors"
                     aria-expanded={isOpen}
                 >
                     <span>{category.title}</span>
-                    <svg className={`w-6 h-6 shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg className={`w-6 h-6 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-accent' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
             </h3>
-            {isOpen && (
-                <div className="p-5 border-t border-base-300">
+            <div
+              className={`grid transition-all duration-500 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
+            >
+              <div className="overflow-hidden">
+                <div className="p-5 border-t border-white/10">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {category.items.map((item) => {
                              const data = item.accessor(content);
@@ -32,7 +35,8 @@ const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedCon
                         })}
                     </div>
                 </div>
-            )}
+              </div>
+            </div>
         </div>
     );
 };
@@ -46,7 +50,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ content }) => {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4 text-left">
             {CONTENT_CATEGORIES.map((category) => (
                 <AccordionItem 
                     key={category.id} 

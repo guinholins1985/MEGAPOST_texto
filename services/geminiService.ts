@@ -97,6 +97,19 @@ const getResponseSchema = () => ({
                 newsletters: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "Newsletters semanais (1-2)" },
             },
         },
+        salesAndConversion: {
+            type: Type.OBJECT,
+            properties: {
+                priceVariations: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { strategy: { type: Type.STRING }, description: { type: Type.STRING } } }, description: "Variações de preço e descontos progressivos (3–5)" },
+                competitorComparisons: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { feature: { type: Type.STRING }, thisProduct: { type: Type.STRING }, competitor: { type: Type.STRING } } }, description: "Comparativos com concorrentes (1–3)" },
+                promotionCountdowns: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { event: { type: Type.STRING }, text: { type: Type.STRING } } }, description: "Textos para contagens regressivas para promoções (1–3)" },
+                discountCoupons: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { code: { type: Type.STRING }, discount: { type: Type.STRING }, description: { type: Type.STRING } } }, description: "Cupons de desconto personalizados (5–10)" },
+                campaignLandingPages: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, headline: { type: Type.STRING }, body: { type: Type.STRING }, cta: { type: Type.STRING } } }, description: "Conteúdo para landpages simples para campanhas (1–2)" },
+                promotionalPopups: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { headline: { type: Type.STRING }, body: { type: Type.STRING }, cta: { type: Type.STRING } } }, description: "Textos para pop-ups promocionais (3–5)" },
+                interactiveQuizzes: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, questions: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { question: { type: Type.STRING }, options: { type: Type.ARRAY, items: { type: Type.STRING } }, answer: { type: Type.STRING } } } } } }, description: "Quizzes interativos para engajamento (2–3)" },
+                serviceChatbots: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { initialMessage: { type: Type.STRING }, options: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { option: { type: Type.STRING }, response: { type: Type.STRING } } } } } }, description: "Scripts para chatbots de atendimento (1–2)" },
+            },
+        },
         other: {
             type: Type.OBJECT,
             properties: {

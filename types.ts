@@ -37,6 +37,16 @@ export interface GeneratedContent {
     abandonedCartEmails: { subject: string; body: string }[];
     newsletters: { subject: string; body: string }[];
   };
+  salesAndConversion: {
+    priceVariations: { strategy: string; description: string }[];
+    competitorComparisons: { feature: string; thisProduct: string; competitor: string }[];
+    promotionCountdowns: { event: string; text: string }[];
+    discountCoupons: { code: string; discount: string; description: string }[];
+    campaignLandingPages: { title: string; headline: string; body: string; cta: string }[];
+    promotionalPopups: { headline: string; body: string; cta: string }[];
+    interactiveQuizzes: { title: string; questions: { question: string; options: string[]; answer: string }[] }[];
+    serviceChatbots: { initialMessage: string; options: { option: string; response: string }[] }[];
+  };
   other: {
     fakeTestimonials: { author: string; text: string }[];
     purchaseGuides: { title: string; content: string }[];

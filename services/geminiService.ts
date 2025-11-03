@@ -29,7 +29,7 @@ const fileToGenerativePart = async (file: File) => {
 
 const buildPrompt = async (image: File | null, url: string) => {
     const promptParts: any[] = [
-        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns, e faça uma análise de preço em relação a possíveis concorrentes. Siga estritamente o schema JSON fornecido para a sua resposta." }
+        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Gere também respostas para comentários negativos, textos para stories, descrições para vídeos no YouTube, sequências de e-mail para nutrição de leads e textos para embalagens. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns, e faça uma análise de preço em relação a possíveis concorrentes. Siga estritamente o schema JSON fornecido para a sua resposta." }
     ];
 
     if (image) {
@@ -58,6 +58,8 @@ const getResponseSchema = () => ({
                 longTailKeywords: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Keywords long-tail sugeridas (10–15)" },
                 seoBlogPosts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Artigos para blog otimizados para SEO (1–2)" },
                 metaDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Meta descriptions otimizadas (3-5)" },
+                blogPostIntroductions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Introduções que prendem a atenção para artigos de blog (2-4)" },
+                blogPostConclusions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Conclusões para artigos com chamadas para ação (CTAs) (2-4)" },
             },
         },
         socialMediaAndEngagement: {
@@ -71,6 +73,8 @@ const getResponseSchema = () => ({
                 instagramCaptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Legendas para posts no Instagram (3–5)" },
                 tweets: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Tweets prontos (3-5)" },
                 facebookGroupPosts: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Postagens para grupos no Facebook (2–3)" },
+                storyTexts: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Textos para Stories (perguntas interativas, enquetes) (3-5)" },
+                youtubeVideoDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições otimizadas para vídeos no YouTube (2-3)" },
             },
         },
         copywritingAndAdvertising: {
@@ -86,6 +90,9 @@ const getResponseSchema = () => ({
                 technicalDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições técnicas detalhadas (1-2)" },
                 benefitsVsFeatures: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { feature: { type: Type.STRING }, benefit: { type: Type.STRING } } }, description: "Benefícios vs. recursos" },
                 remarketingPhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases para campanhas de remarketing (3–5)" },
+                negativeCommentResponses: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Respostas automáticas para comentários negativos com tom empático e solucionador (2-4)" },
+                thankYouCardMessages: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Mensagens para cartões de agradecimento pós-compra (2-4)" },
+                productPackagingTexts: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Textos curtos e chamativos para embalagens de produtos (2-4)" },
             },
         },
         emailMarketingAndAutomation: {
@@ -95,6 +102,8 @@ const getResponseSchema = () => ({
                 welcomeEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "E-mail de boas-vindas automatizado (1–2)" },
                 abandonedCartEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "E-mails de recuperação de carrinho abandonado (2-3)" },
                 newsletters: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "Newsletters semanais (1-2)" },
+                leadNurturingSequence: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "Sequência de e-mails para nutrição de leads (1-2 sequências com 2-3 e-mails cada)" },
+                reactivationEmails: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { subject: { type: Type.STRING }, body: { type: Type.STRING } } }, description: "E-mails para reativar clientes inativos (1-2)" },
             },
         },
         salesAndConversion: {

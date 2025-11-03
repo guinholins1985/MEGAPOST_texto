@@ -8,6 +8,8 @@ export interface GeneratedContent {
     longTailKeywords: string[];
     seoBlogPosts: { title: string; content: string }[];
     metaDescriptions: string[];
+    blogPostIntroductions: string[];
+    blogPostConclusions: string[];
   };
   socialMediaAndEngagement: {
     popularHashtags: string[];
@@ -18,6 +20,8 @@ export interface GeneratedContent {
     instagramCaptions: string[];
     tweets: string[];
     facebookGroupPosts: string[];
+    storyTexts: string[];
+    youtubeVideoDescriptions: string[];
   };
   copywritingAndAdvertising: {
     persuasiveDescriptions: string[];
@@ -30,12 +34,17 @@ export interface GeneratedContent {
     technicalDescriptions: string[];
     benefitsVsFeatures: { feature: string; benefit: string }[];
     remarketingPhrases: string[];
+    negativeCommentResponses: string[];
+    thankYouCardMessages: string[];
+    productPackagingTexts: string[];
   };
   emailMarketingAndAutomation: {
     personalizedMarketingEmails: { subject: string; body: string }[];
     welcomeEmails: { subject: string; body: string }[];
     abandonedCartEmails: { subject: string; body: string }[];
     newsletters: { subject: string; body: string }[];
+    leadNurturingSequence: { subject: string; body: string }[];
+    reactivationEmails: { subject: string; body: string }[];
   };
   salesAndConversion: {
     priceVariations: { strategy: string; description: string }[];

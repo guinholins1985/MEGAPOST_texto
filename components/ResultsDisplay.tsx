@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { GeneratedContent, ContentCategory } from '../types';
 import { CONTENT_CATEGORIES } from '../constants';
 import { ContentCard } from './ContentCard';
 
 interface ResultsDisplayProps {
     content: GeneratedContent;
+    searchQuery: string;
 }
 
 // Icons
@@ -63,7 +64,7 @@ const formatCategoryForCopy = (category: ContentCategory, content: GeneratedCont
     return `${title}\n${separator}\n${categoryContent}`;
 };
 
-const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedContent, isOpen: boolean, onToggle: () => void }> = ({ category, content, isOpen, onToggle }) => {
+const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedContent, isOpen: boolean, onToggle: () => void, searchQuery: string }> = ({ category, content, isOpen, onToggle, searchQuery }) => {
     const [copiedTooltip, setCopiedTooltip] = useState('Copiar categoria');
     
     const handleCategoryCopy = (e: React.MouseEvent) => {
@@ -93,8 +94,9 @@ const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedCon
             <h3>
                 <button
                     onClick={onToggle}
-                    className="flex justify-between items-center w-full p-4 sm:p-5 font-semibold text-left text-base sm:text-lg text-text-primary hover:bg-slate-50 transition-colors"
+                    className="flex justify-between items-center w-full p-4 sm:p-5 font-semibold text-left text-base sm:text-lg text-text-primary hover:bg-slate-50 transition-colors disabled:cursor-not-allowed"
                     aria-expanded={isOpen}
+                    disabled={!!searchQuery}
                 >
                     <span className="flex-grow pr-4">{category.title}</span>
                     <div className="flex items-center flex-shrink-0">
@@ -108,7 +110,7 @@ const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedCon
                                 </ActionButton>
                             </div>
                         )}
-                        <svg className={`w-6 h-6 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-accent' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg className={`w-6 h-6 shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180 text-brand-accent' : ''} ${!!searchQuery ? 'opacity-50' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </button>
             </h3>
@@ -122,7 +124,7 @@ const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedCon
                              const data = item.accessor(content);
                              if(!data || (Array.isArray(data) && data.length === 0)) return null;
 
-                             return <ContentCard key={item.id} title={item.label} data={data} />
+                             return <ContentCard key={item.id} title={item.label} data={data} searchQuery={searchQuery} />
                         })}
                     </div>
                 </div>
@@ -132,8 +134,47 @@ const AccordionItem: React.FC<{ category: ContentCategory; content: GeneratedCon
     );
 };
 
-export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ content }) => {
-    const [openAccordion, setOpenAccordion] = useState<string | null>(CONTENT_CATEGORIES[0].id);
+export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ content, searchQuery }) => {
+    const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+
+    const filteredCategories = useMemo(() => {
+        if (!searchQuery) {
+            return CONTENT_CATEGORIES;
+        }
+
+        const lowercasedQuery = searchQuery.toLowerCase();
+
+        return CONTENT_CATEGORIES.map(category => {
+            const categoryTitleMatch = category.title.toLowerCase().includes(lowercasedQuery);
+
+            const filteredItems = category.items.filter(item => {
+                const itemLabelMatch = item.label.toLowerCase().includes(lowercasedQuery);
+                if (itemLabelMatch) return true;
+
+                const data = item.accessor(content);
+                if (!data) return false;
+                
+                try {
+                    const contentMatch = JSON.stringify(data).toLowerCase().includes(lowercasedQuery);
+                    return contentMatch;
+                } catch (e) {
+                    return false;
+                }
+            });
+
+            if (categoryTitleMatch) {
+                return category; 
+            }
+            
+            if (filteredItems.length > 0) {
+                return { ...category, items: filteredItems };
+            }
+
+            return null;
+        }).filter((category): category is ContentCategory => category !== null);
+
+    }, [searchQuery, content]);
+
 
     const toggleAccordion = (id: string) => {
         setOpenAccordion(openAccordion === id ? null : id);
@@ -141,15 +182,23 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ content }) => {
 
     return (
         <div className="space-y-3 sm:space-y-4 text-left">
-            {CONTENT_CATEGORIES.map((category) => (
-                <AccordionItem 
-                    key={category.id} 
-                    category={category} 
-                    content={content} 
-                    isOpen={openAccordion === category.id} 
-                    onToggle={() => toggleAccordion(category.id)} 
-                />
-            ))}
+            {filteredCategories.length > 0 ? (
+                 filteredCategories.map((category) => (
+                    <AccordionItem 
+                        key={category.id} 
+                        category={category} 
+                        content={content} 
+                        isOpen={searchQuery ? true : openAccordion === category.id} 
+                        onToggle={() => toggleAccordion(category.id)} 
+                        searchQuery={searchQuery}
+                    />
+                ))
+            ) : (
+                <div className="text-center py-10 px-4 bg-slate-100 rounded-lg mt-6 animate-fadeIn">
+                    <p className="text-lg font-semibold text-text-primary">Nenhum resultado encontrado</p>
+                    <p className="text-text-secondary mt-1">Tente usar palavras-chave diferentes na sua busca.</p>
+                </div>
+            )}
         </div>
     );
 };

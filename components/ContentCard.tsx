@@ -18,6 +18,33 @@ const CheckIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
 );
 
+const Highlighter: React.FC<{ text: string; highlight: string }> = React.memo(({ text, highlight }) => {
+    if (!text || !highlight.trim()) {
+        return <>{text}</>;
+    }
+    try {
+        const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const regex = new RegExp(`(${escapedHighlight})`, 'gi');
+        const parts = text.split(regex);
+        return (
+            <>
+                {parts.filter(part => part).map((part, i) =>
+                    regex.test(part) ? (
+                        <mark key={i} className="bg-yellow-300/80 text-black px-0.5 rounded-sm font-bold">
+                            {part}
+                        </mark>
+                    ) : (
+                        <span key={i}>{part}</span>
+                    )
+                )}
+            </>
+        );
+    } catch (error) {
+        // Fallback for invalid regex, e.g. incomplete escape sequence
+        return <>{text}</>;
+    }
+});
+
 const formatDataForCopy = (data: any): string => {
     if (Array.isArray(data)) {
         return data.map(item => {
@@ -36,6 +63,7 @@ const formatDataForCopy = (data: any): string => {
 interface ContentCardProps {
     title: string;
     data: any;
+    searchQuery: string;
 }
 
 const ActionButton: React.FC<{ tooltip: string, onClick: () => void, children: React.ReactNode }> = ({ tooltip, onClick, children }) => (
@@ -49,7 +77,7 @@ const ActionButton: React.FC<{ tooltip: string, onClick: () => void, children: R
     </div>
 );
 
-export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
+export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQuery }) => {
     const [copiedTooltip, setCopiedTooltip] = useState('Copiar');
     const [isZoomed, setIsZoomed] = useState(false);
     const textToCopy = useMemo(() => formatDataForCopy(data), [data]);
@@ -84,13 +112,13 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
                 <ul className={`space-y-4 ${textSize}`}>
                     {data.map((item, index) => (
                         <li key={index} className="text-text-primary bg-base-200 p-2 sm:p-3 rounded-md border border-base-300">
-                           {typeof item === 'string' && <p>{item}</p>}
+                           {typeof item === 'string' && <p><Highlighter text={item} highlight={searchQuery} /></p>}
                            {typeof item === 'object' && item !== null && (
                                <div className="space-y-1.5">
                                    {Object.entries(item).map(([key, value]) => (
                                        <div key={key}>
                                            <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
-                                           <span className="text-text-secondary">{String(value)}</span>
+                                           <span className="text-text-secondary"><Highlighter text={String(value)} highlight={searchQuery} /></span>
                                        </div>
                                    ))}
                                </div>
@@ -100,7 +128,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
                 </ul>
             );
         }
-        return <p className={textSize}>{String(data)}</p>;
+        return <p className={textSize}><Highlighter text={String(data)} highlight={searchQuery} /></p>;
     };
 
     return (

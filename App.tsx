@@ -3,6 +3,7 @@ import { Header } from './components/Header';
 import { InputArea } from './components/InputArea';
 import { ResultsDisplay } from './components/ResultsDisplay';
 import { Loader } from './components/Loader';
+import { CompletionToast } from './components/CompletionToast';
 import { generateProductContent } from './services/geminiService';
 import type { GeneratedContent } from './types';
 
@@ -11,6 +12,7 @@ const App: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
     const [generationId, setGenerationId] = useState<number>(0);
+    const [showCompletionToast, setShowCompletionToast] = useState<boolean>(false);
 
     const handleGenerate = useCallback(async (image: File | null, url: string) => {
         if (!image && !url) {
@@ -21,11 +23,13 @@ const App: React.FC = () => {
         setIsLoading(true);
         setError(null);
         setGeneratedContent(null);
+        setShowCompletionToast(false);
 
         try {
             const content = await generateProductContent(image, url);
             setGeneratedContent(content);
             setGenerationId(Date.now()); // Update key to re-trigger animation
+            setShowCompletionToast(true);
         } catch (err) {
             console.error(err);
             setError('Ocorreu um erro ao gerar o conteúdo. A IA pode estar sobrecarregada. Por favor, tente novamente.');
@@ -37,18 +41,19 @@ const App: React.FC = () => {
     return (
         <div className="min-h-screen bg-transparent font-sans text-text-primary">
             <Header />
-            <main className="container mx-auto px-4 py-8 md:py-16">
+            <CompletionToast show={showCompletionToast} onClose={() => setShowCompletionToast(false)} />
+            <main className="container mx-auto px-4 py-6 sm:py-8 md:py-12">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-brand-primary to-brand-secondary mb-4 animate-[fadeIn_1s_ease-out]">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-brand-primary to-brand-secondary mb-4 animate-[fadeIn_1s_ease-out]">
                         Crie Conteúdo de Marketing em Segundos
                     </h1>
-                    <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-10 animate-[fadeIn_1.5s_ease-out]">
+                    <p className="text-base sm:text-lg md:text-xl text-text-secondary max-w-2xl mx-auto mb-8 sm:mb-10 animate-[fadeIn_1.5s_ease-out]">
                         Faça upload de uma imagem ou cole um link de produto. Nossa IA analisará e gerará textos de alta conversão para todas as suas necessidades.
                     </p>
                     
                     <InputArea onGenerate={handleGenerate} isLoading={isLoading} />
 
-                    <div className="mt-12 min-h-[200px]">
+                    <div id="results-section" className="mt-12 min-h-[200px]">
                         {isLoading && <Loader />}
 
                         {error && (
@@ -60,7 +65,7 @@ const App: React.FC = () => {
 
                         {generatedContent && !isLoading && (
                              <div key={generationId} className="animate-fadeIn">
-                               <h2 className="text-3xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-violet-600">
+                               <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 sm:mb-8 text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-violet-600">
                                    Seu Conteúdo Mágico está Pronto!
                                </h2>
                                 <ResultsDisplay content={generatedContent} />

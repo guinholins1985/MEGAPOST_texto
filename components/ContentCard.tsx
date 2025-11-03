@@ -40,7 +40,7 @@ interface ContentCardProps {
 
 const ActionButton: React.FC<{ tooltip: string, onClick: () => void, children: React.ReactNode }> = ({ tooltip, onClick, children }) => (
     <div className="relative group">
-        <button onClick={onClick} className="p-1.5 rounded-full text-text-secondary hover:bg-slate-200 hover:text-text-primary transition-colors">
+        <button onClick={onClick} className="p-2 rounded-full text-text-secondary hover:bg-slate-200 hover:text-text-primary transition-colors">
             {children}
         </button>
         <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-slate-800 text-white text-xs rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
@@ -83,7 +83,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
             return (
                 <ul className={`space-y-4 ${textSize}`}>
                     {data.map((item, index) => (
-                        <li key={index} className="text-text-primary bg-base-200 p-3 rounded-md border border-base-300">
+                        <li key={index} className="text-text-primary bg-base-200 p-2 sm:p-3 rounded-md border border-base-300">
                            {typeof item === 'string' && <p>{item}</p>}
                            {typeof item === 'object' && item !== null && (
                                <div className="space-y-1.5">
@@ -105,10 +105,10 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
 
     return (
         <>
-            <div className="bg-slate-50/70 rounded-lg p-4 flex flex-col h-full border border-base-300 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-300/50 hover:border-slate-300">
+            <div className="bg-slate-50/70 rounded-lg p-3 sm:p-4 flex flex-col h-full border border-base-300 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-300/50 hover:border-slate-300">
                 <div className="flex justify-between items-start mb-3">
                     <h4 className="font-bold text-md text-transparent bg-clip-text bg-gradient-to-r from-slate-700 to-slate-800 pr-2">{title}</h4>
-                    <div className="flex items-center space-x-1 flex-shrink-0">
+                    <div className="flex items-center space-x-0 sm:space-x-1 flex-shrink-0">
                         <ActionButton tooltip={copiedTooltip} onClick={() => handleCopy('Copiado!')}>
                              {copiedTooltip === 'Copiado!' ? <CheckIcon/> : <ClipboardIcon className="w-5 h-5"/> }
                         </ActionButton>
@@ -123,7 +123,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data }) => {
                         </ActionButton>
                     </div>
                 </div>
-                <div className="flex-grow max-h-80 overflow-y-auto pr-2">
+                <div className="flex-grow max-h-60 sm:max-h-72 overflow-y-auto pr-2">
                     {renderContent()}
                 </div>
             </div>

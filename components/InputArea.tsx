@@ -77,7 +77,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     }
 
     return (
-        <div className={`bg-base-200 border border-base-300 rounded-xl p-6 md:p-8 space-y-6 shadow-xl shadow-slate-200/70 animate-[slideUp_1s_ease-out] transition-opacity duration-300 ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}>
+        <div className={`bg-base-200 border border-base-300 rounded-xl p-4 sm:p-6 md:p-8 space-y-6 shadow-xl shadow-slate-200/70 animate-[slideUp_1s_ease-out] transition-opacity duration-300 ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}>
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
                 <div className="flex-1">
                     <label 
@@ -92,14 +92,14 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                         <input type="file" id="file-upload" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} disabled={isLoading} />
                         {imageUrl ? (
                             <div className="text-center relative z-10">
-                               <img src={imageUrl} alt="Preview" className="max-h-40 rounded-lg object-contain shadow-md"/>
+                               <img src={imageUrl} alt="Preview" className="max-h-32 sm:max-h-40 rounded-lg object-contain shadow-md"/>
                                <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-primary hover:underline" disabled={isLoading}>Trocar imagem</button>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center text-center relative z-10">
-                                <UploadIcon className="w-12 h-12 text-text-secondary mb-3 group-hover:text-brand-primary transition-colors"/>
-                                <p className="font-semibold text-text-primary">Arraste a imagem do produto aqui</p>
-                                <p className="text-sm text-text-secondary">ou clique para selecionar (Max 4MB)</p>
+                                <UploadIcon className="w-10 h-10 sm:w-12 sm:h-12 text-text-secondary mb-3 group-hover:text-brand-primary transition-colors"/>
+                                <p className="text-sm sm:text-base font-semibold text-text-primary">Arraste a imagem do produto aqui</p>
+                                <p className="text-xs sm:text-sm text-text-secondary">ou clique para selecionar (Max 4MB)</p>
                             </div>
                         )}
                     </label>

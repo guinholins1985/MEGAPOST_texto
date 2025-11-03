@@ -47,13 +47,13 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }
                     <h3 className="font-bold text-lg text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-violet-600">{title}</h3>
                     <button 
                         onClick={onClose} 
-                        className="p-1 rounded-full text-text-secondary hover:bg-slate-100 hover:text-text-primary transition-colors"
+                        className="p-2 -m-2 rounded-full text-text-secondary hover:bg-slate-100 hover:text-text-primary transition-colors"
                         aria-label="Close modal"
                     >
                         <XMarkIcon className="w-6 h-6" />
                     </button>
                 </header>
-                <main className="p-6 overflow-y-auto">
+                <main className="p-4 sm:p-6 overflow-y-auto">
                     {children}
                 </main>
             </div>

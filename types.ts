@@ -2,7 +2,6 @@
 export interface GeneratedContent {
   seoAndBlog: {
     seoTitles: string[];
-    persuasiveDescriptions: string[];
     seoTags: string[];
     metaTagsAndAltText: string[];
     faq: { question: string; answer: string }[];
@@ -21,6 +20,7 @@ export interface GeneratedContent {
     facebookGroupPosts: string[];
   };
   copywritingAndAdvertising: {
+    persuasiveDescriptions: string[];
     promotionalSalePhrases: string[];
     paidAdCopy: string[];
     slogans: string[];

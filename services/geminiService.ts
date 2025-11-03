@@ -52,7 +52,6 @@ const getResponseSchema = () => ({
             type: Type.OBJECT,
             properties: {
                 seoTitles: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos otimizados para SEO (10–15)" },
-                persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições persuasivas com benefícios (2–5)" },
                 seoTags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Tags SEO relevantes (20–30)" },
                 metaTagsAndAltText: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Meta tags e alt text para imagens (5–10)" },
                 faq: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { question: { type: Type.STRING }, answer: { type: Type.STRING } } }, description: "Perguntas frequentes (FAQ) automáticas (5–10)" },
@@ -77,6 +76,7 @@ const getResponseSchema = () => ({
         copywritingAndAdvertising: {
             type: Type.OBJECT,
             properties: {
+                persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições persuasivas com benefícios (2–5)" },
                 promotionalSalePhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases promocionais de venda (10–15)" },
                 paidAdCopy: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Copy para anúncios pagos (5–10)" },
                 slogans: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Slogans publicitários (5–10)" },

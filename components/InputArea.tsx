@@ -23,17 +23,18 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
     const [productUrl, setProductUrl] = useState<string>('');
     const [dragActive, setDragActive] = useState(false);
 
-    const handleFileChange = (files: FileList | null) => {
-        if (files && files[0]) {
-            const file = files[0];
-            if (file.size > 4 * 1024 * 1024) { // 4MB size limit
-                alert("O arquivo de imagem é muito grande. Por favor, use um arquivo com menos de 4MB.");
-                return;
-            }
-            setImageFile(file);
-            setImageUrl(URL.createObjectURL(file));
+    const handleFileChange = useCallback((files: FileList | null) => {
+        if (isLoading || !files || files.length === 0) return;
+        
+        const file = files[0];
+        if (file.size > 4 * 1024 * 1024) { // 4MB size limit
+            alert("O arquivo de imagem é muito grande. Por favor, use um arquivo com menos de 4MB.");
+            return;
         }
-    };
+        setImageFile(file);
+        setImageUrl(URL.createObjectURL(file));
+        onGenerate(file, productUrl);
+    }, [isLoading, onGenerate, productUrl]);
     
     const handleDrag = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -52,20 +53,31 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             handleFileChange(e.dataTransfer.files);
         }
-    }, []);
+    }, [handleFileChange]);
 
-    const handleFormSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        onGenerate(imageFile, productUrl);
+    const handleUrlBlur = () => {
+        if (isLoading) return;
+        
+        const isValidUrl = productUrl.startsWith('http://') || productUrl.startsWith('https://');
+
+        // Trigger only if there's a valid URL, or if an image exists.
+        // This prevents triggering on blur with an empty/invalid URL when no image is present.
+        if (isValidUrl || imageFile) {
+             onGenerate(imageFile, productUrl);
+        }
     };
     
     const resetImage = () => {
         setImageFile(null);
         setImageUrl('');
+        const isValidUrl = productUrl.startsWith('http://') || productUrl.startsWith('https://');
+        if (isValidUrl) {
+            onGenerate(null, productUrl);
+        }
     }
 
     return (
-        <form onSubmit={handleFormSubmit} className="bg-base-200 border border-base-300 rounded-xl p-6 md:p-8 space-y-6 shadow-xl shadow-slate-200/70 animate-[slideUp_1s_ease-out]">
+        <div className={`bg-base-200 border border-base-300 rounded-xl p-6 md:p-8 space-y-6 shadow-xl shadow-slate-200/70 animate-[slideUp_1s_ease-out] transition-opacity duration-300 ${isLoading ? 'opacity-60 pointer-events-none' : ''}`}>
             <div className="flex flex-col md:flex-row gap-6 items-stretch">
                 <div className="flex-1">
                     <label 
@@ -77,11 +89,11 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                         className={`relative flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-lg h-full transition-all duration-300 group cursor-pointer ${dragActive ? 'border-brand-primary bg-brand-primary/10' : 'border-base-300 hover:border-brand-primary'}`}
                     >
                          <div className={`absolute inset-0 bg-gradient-to-br from-brand-primary to-brand-secondary rounded-lg opacity-0 transition-opacity duration-300 ${dragActive ? 'opacity-20' : 'group-hover:opacity-10'}`}></div>
-                        <input type="file" id="file-upload" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} />
+                        <input type="file" id="file-upload" className="hidden" accept="image/*" onChange={(e) => handleFileChange(e.target.files)} disabled={isLoading} />
                         {imageUrl ? (
                             <div className="text-center relative z-10">
                                <img src={imageUrl} alt="Preview" className="max-h-40 rounded-lg object-contain shadow-md"/>
-                               <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-primary hover:underline">Trocar imagem</button>
+                               <button type="button" onClick={resetImage} className="mt-4 text-sm text-brand-primary hover:underline" disabled={isLoading}>Trocar imagem</button>
                             </div>
                         ) : (
                             <div className="flex flex-col items-center justify-center text-center relative z-10">
@@ -108,23 +120,17 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                             type="url"
                             value={productUrl}
                             onChange={(e) => setProductUrl(e.target.value)}
+                            onBlur={handleUrlBlur}
                             placeholder="https://sua-loja.com/produto"
                             className="w-full pl-10 pr-4 py-3 bg-slate-100 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary focus:shadow-inner focus:bg-base-200 outline-none transition duration-200"
+                            disabled={isLoading}
                         />
                     </div>
                 </div>
             </div>
-
-            <button
-                type="submit"
-                disabled={isLoading || (!imageFile && !productUrl)}
-                className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-bold py-4 px-4 rounded-lg transition-all duration-300 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transform hover:scale-[1.02] hover:shadow-lg hover:shadow-brand-primary/40 active:scale-100 focus:outline-none focus:ring-4 focus:ring-brand-primary/50 disabled:animate-none animate-pulse-glow"
-            >
-                {isLoading ? 'Gerando Mágica...' : 'Gerar Conteúdo com IA'}
-                {!isLoading && (
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clipRule="evenodd" /></svg>
-                )}
-            </button>
-        </form>
+            <div className="text-center text-sm text-text-secondary pt-4 border-t border-base-300/60">
+                <p>A geração de conteúdo começará automaticamente ao adicionar uma imagem ou um link válido.</p>
+            </div>
+        </div>
     );
 };

@@ -39,6 +39,8 @@ export interface GeneratedContent {
   };
   salesAndConversion: {
     priceVariations: { strategy: string; description: string }[];
+    marketplacePricing: { platform: string; price: string; fee: string; finalPrice: string }[];
+    competitorPriceAnalysis: { competitor: string; price: string; justification: string }[];
     competitorComparisons: { feature: string; thisProduct: string; competitor: string }[];
     promotionCountdowns: { event: string; text: string }[];
     discountCoupons: { code: string; discount: string; description: string }[];

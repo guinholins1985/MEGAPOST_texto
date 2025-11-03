@@ -20,6 +20,8 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
         id: 'salesAndConversion',
         title: 'Vendas e Conversão',
         items: [
+            { id: 'marketplacePricing', label: 'Preços para Marketplaces', accessor: (c: GeneratedContent) => c.salesAndConversion.marketplacePricing },
+            { id: 'competitorPriceAnalysis', label: 'Análise de Preço da Concorrência', accessor: (c: GeneratedContent) => c.salesAndConversion.competitorPriceAnalysis },
             { id: 'priceVariations', label: 'Variações de Preço e Descontos (3–5)', accessor: (c: GeneratedContent) => c.salesAndConversion.priceVariations },
             { id: 'discountCoupons', label: 'Cupons de Desconto (5–10)', accessor: (c: GeneratedContent) => c.salesAndConversion.discountCoupons },
             { id: 'promotionalPopups', label: 'Textos para Pop-ups (3–5)', accessor: (c: GeneratedContent) => c.salesAndConversion.promotionalPopups },

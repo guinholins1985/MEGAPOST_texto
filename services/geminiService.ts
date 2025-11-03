@@ -29,7 +29,7 @@ const fileToGenerativePart = async (file: File) => {
 
 const buildPrompt = async (image: File | null, url: string) => {
     const promptParts: any[] = [
-        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Siga estritamente o schema JSON fornecido para a sua resposta." }
+        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns, e faça uma análise de preço em relação a possíveis concorrentes. Siga estritamente o schema JSON fornecido para a sua resposta." }
     ];
 
     if (image) {
@@ -101,6 +101,31 @@ const getResponseSchema = () => ({
             type: Type.OBJECT,
             properties: {
                 priceVariations: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { strategy: { type: Type.STRING }, description: { type: Type.STRING } } }, description: "Variações de preço e descontos progressivos (3–5)" },
+                marketplacePricing: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            platform: { type: Type.STRING, description: "Nome do marketplace (ex: Shopee, Mercado Livre)" },
+                            price: { type: Type.STRING, description: "Preço base do produto" },
+                            fee: { type: Type.STRING, description: "Taxa estimada do marketplace" },
+                            finalPrice: { type: Type.STRING, description: "Preço final sugerido para venda no marketplace" },
+                        }
+                    },
+                    description: "Cálculo de preço para diferentes marketplaces (Shopee, Mercado Livre, Amazon, OLX)"
+                },
+                competitorPriceAnalysis: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            competitor: { type: Type.STRING, description: "Nome do concorrente" },
+                            price: { type: Type.STRING, description: "Preço praticado pelo concorrente" },
+                            justification: { type: Type.STRING, description: "Análise e justificativa para o preço do nosso produto em comparação" },
+                        }
+                    },
+                    description: "Análise de preços de concorrentes (1–3)"
+                },
                 competitorComparisons: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { feature: { type: Type.STRING }, thisProduct: { type: Type.STRING }, competitor: { type: Type.STRING } } }, description: "Comparativos com concorrentes (1–3)" },
                 promotionCountdowns: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { event: { type: Type.STRING }, text: { type: Type.STRING } } }, description: "Textos para contagens regressivas para promoções (1–3)" },
                 discountCoupons: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { code: { type: Type.STRING }, discount: { type: Type.STRING }, description: { type: Type.STRING } } }, description: "Cupons de desconto personalizados (5–10)" },

@@ -29,7 +29,7 @@ const fileToGenerativePart = async (file: File) => {
 
 const buildPrompt = async (image: File | null, url: string) => {
     const promptParts: any[] = [
-        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Gere também respostas para comentários negativos, textos para stories, descrições para vídeos no YouTube, sequências de e-mail para nutrição de leads e textos para embalagens. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns, e faça uma análise de preço em relação a possíveis concorrentes. Siga estritamente o schema JSON fornecido para a sua resposta." }
+        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Gere também respostas para comentários negativos, textos para stories, descrições para vídeos no YouTube, sequências de e-mail para nutrição de leads e textos para embalagens. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns, e faça uma análise de preço em relação a possíveis concorrentes. Adicionalmente, gere uma análise de sentimento para possíveis comentários de clientes, classifique os anúncios criados com um score de potencial de venda, sugira categorias de e-commerce com tags, e crie uma análise de posicionamento de preço. Siga estritamente o schema JSON fornecido para a sua resposta." }
     ];
 
     if (image) {
@@ -82,7 +82,7 @@ const getResponseSchema = () => ({
             properties: {
                 persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições persuasivas com benefícios (2–5)" },
                 promotionalSalePhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases promocionais de venda (10–15)" },
-                paidAdCopy: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Copy para anúncios pagos (5–10)" },
+                paidAdCopy: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { ad: { type: Type.STRING }, score: { type: Type.NUMBER }, justification: { type: Type.STRING } } }, description: "Copy para anúncios pagos com score de potencial de venda (0-100) e justificativa (5–10)" },
                 slogans: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Slogans publicitários (5–10)" },
                 catchyHeadlines: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos (10–15)" },
                 ctas: { type: Type.ARRAY, items: { type: Type.STRING }, description: "CTA automático (5–10)" },
@@ -142,6 +142,8 @@ const getResponseSchema = () => ({
                 promotionalPopups: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { headline: { type: Type.STRING }, body: { type: Type.STRING }, cta: { type: Type.STRING } } }, description: "Textos para pop-ups promocionais (3–5)" },
                 interactiveQuizzes: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, questions: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { question: { type: Type.STRING }, options: { type: Type.ARRAY, items: { type: Type.STRING } }, answer: { type: Type.STRING } } } } } }, description: "Quizzes interativos para engajamento (2–3)" },
                 serviceChatbots: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { initialMessage: { type: Type.STRING }, options: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { option: { type: Type.STRING }, response: { type: Type.STRING } } } } } }, description: "Scripts para chatbots de atendimento (1–2)" },
+                suggestedCategoriesAndTags: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { category: { type: Type.STRING }, tags: { type: Type.ARRAY, items: { type: Type.STRING } } } }, description: "Sugestões de categorias e tags para e-commerce (2-4)" },
+                pricePositioning: { type: Type.OBJECT, properties: { summary: { type: Type.STRING, description: "Resumo do posicionamento de preço" }, comparison: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { competitor: { type: Type.STRING }, price: { type: Type.STRING }, positioning: { type: Type.STRING } } } } }, description: "Análise de posicionamento de preço contra concorrentes" },
             },
         },
         other: {
@@ -149,6 +151,12 @@ const getResponseSchema = () => ({
             properties: {
                 fakeTestimonials: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { author: { type: Type.STRING }, text: { type: Type.STRING } } }, description: "Depoimentos fictícios gerados por IA (2–3)" },
                 purchaseGuides: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Guias de compra comparativos (1–2)" },
+            },
+        },
+        customerFeedback: {
+            type: Type.OBJECT,
+            properties: {
+                sentimentAnalysis: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { comment: { type: Type.STRING }, sentiment: { type: Type.STRING, enum: ['Positivo', 'Negativo', 'Neutro'] }, analysis: { type: Type.STRING } } }, description: "Análise de sentimento de possíveis comentários e avaliações de clientes (3-5)" },
             },
         },
     },

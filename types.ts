@@ -26,7 +26,7 @@ export interface GeneratedContent {
   copywritingAndAdvertising: {
     persuasiveDescriptions: string[];
     promotionalSalePhrases: string[];
-    paidAdCopy: string[];
+    paidAdCopy: { ad: string; score: number; justification: string }[];
     slogans: string[];
     catchyHeadlines: string[];
     ctas: string[];
@@ -57,11 +57,16 @@ export interface GeneratedContent {
     promotionalPopups: { headline: string; body: string; cta: string }[];
     interactiveQuizzes: { title: string; questions: { question: string; options: string[]; answer: string }[] }[];
     serviceChatbots: { initialMessage: string; options: { option: string; response: string }[] }[];
+    suggestedCategoriesAndTags: { category: string; tags: string[]; }[];
+    pricePositioning: { summary: string; comparison: { competitor: string; price: string; positioning: string }[] };
   };
   other: {
     fakeTestimonials: { author: string; text: string }[];
     purchaseGuides: { title: string; content: string }[];
-  }
+  };
+  customerFeedback: {
+    sentimentAnalysis: { comment: string; sentiment: 'Positivo' | 'Negativo' | 'Neutro'; analysis: string; }[];
+  };
 }
 
 export interface ContentCategory {
@@ -72,7 +77,6 @@ export interface ContentCategory {
 
 export interface ContentItem {
   id: string;
-
   label: string;
   accessor: (content: GeneratedContent) => any;
 }

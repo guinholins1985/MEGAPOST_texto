@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Modal } from './Modal';
 
@@ -45,16 +46,54 @@ const Highlighter: React.FC<{ text: string; highlight: string }> = React.memo(({
     }
 });
 
+const SentimentBadge: React.FC<{ sentiment: string }> = ({ sentiment }) => {
+    const sentimentClasses: { [key: string]: string } = {
+        'Positivo': 'bg-emerald-100 text-emerald-800',
+        'Negativo': 'bg-red-100 text-red-800',
+        'Neutro': 'bg-slate-200 text-slate-800',
+    };
+    const sentimentClass = sentimentClasses[sentiment] || sentimentClasses['Neutro'];
+    return <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${sentimentClass}`}>{sentiment}</span>;
+};
+
+const ScoreDisplay: React.FC<{ score: number }> = ({ score }) => {
+    const getScoreColor = (s: number) => {
+        if (s >= 80) return 'bg-emerald-500';
+        if (s >= 60) return 'bg-yellow-500';
+        return 'bg-red-500';
+    };
+    return (
+        <div className="flex items-center gap-2">
+            <div className="w-24 bg-slate-200 rounded-full h-2.5">
+                <div className={`${getScoreColor(score)} h-2.5 rounded-full`} style={{ width: `${score}%` }}></div>
+            </div>
+            <span className="font-bold text-sm text-slate-700">{score}/100</span>
+        </div>
+    );
+};
+
+
 const formatDataForCopy = (data: any): string => {
     if (Array.isArray(data)) {
         return data.map(item => {
             if (typeof item === 'string') return `- ${item}`;
             if (typeof item === 'object' && item !== null) {
                 return Object.entries(item)
-                    .map(([key, value]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`)
+                    .map(([key, value]) => `${key.charAt(0).toUpperCase() + key.slice(1)}: ${Array.isArray(value) ? value.join(', ') : value}`)
                     .join('\n');
             }
             return '';
+        }).join('\n\n');
+    }
+     if (typeof data === 'object' && data !== null) {
+        return Object.entries(data).map(([key, value]) => {
+            if (Array.isArray(value)) {
+                 const subItems = value.map(subItem => 
+                     '  - ' + Object.entries(subItem).map(([subKey, subValue]) => `${subKey}: ${subValue}`).join(', ')
+                 ).join('\n');
+                 return `${key.charAt(0).toUpperCase() + key.slice(1)}:\n${subItems}`;
+            }
+            return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`;
         }).join('\n\n');
     }
     return String(data);
@@ -115,12 +154,20 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQue
                            {typeof item === 'string' && <p><Highlighter text={item} highlight={searchQuery} /></p>}
                            {typeof item === 'object' && item !== null && (
                                <div className="space-y-1.5">
-                                   {Object.entries(item).map(([key, value]) => (
-                                       <div key={key}>
-                                           <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
-                                           <span className="text-text-secondary"><Highlighter text={String(value)} highlight={searchQuery} /></span>
-                                       </div>
-                                   ))}
+                                   {Object.entries(item).map(([key, value]) => {
+                                        if (key === 'score' && typeof value === 'number') {
+                                            return <div key={key} className="flex items-start"><strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{key}: </strong><ScoreDisplay score={value} /></div>
+                                        }
+                                        if (key === 'sentiment' && typeof value === 'string') {
+                                            return <div key={key} className="flex items-start"><strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{key}: </strong><SentimentBadge sentiment={value} /></div>
+                                        }
+                                        return (
+                                            <div key={key} className="flex items-start">
+                                                <strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{key}: </strong>
+                                                <span className="text-text-secondary"><Highlighter text={Array.isArray(value) ? value.join(', ') : String(value)} highlight={searchQuery} /></span>
+                                            </div>
+                                        )
+                                   })}
                                </div>
                            )}
                         </li>
@@ -128,6 +175,40 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQue
                 </ul>
             );
         }
+
+        if (typeof data === 'object' && data !== null) {
+            return (
+                 <div className={`space-y-4 ${textSize}`}>
+                    {Object.entries(data).map(([key, value]) => (
+                        <div key={key}>
+                            <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
+                            {Array.isArray(value) 
+                                ? (
+                                    <ul className="pl-0 mt-2 space-y-3">
+                                        {value.map((subItem, index) => (
+                                            <li key={index} className="text-text-primary bg-base-200 p-2 sm:p-3 rounded-md border border-base-300">
+                                                <div className="space-y-1.5">
+                                                    {Object.entries(subItem).map(([subKey, subValue]) => (
+                                                        <div key={subKey} className="flex items-start">
+                                                            <strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{subKey}: </strong>
+                                                            <span className="text-text-secondary"><Highlighter text={String(subValue)} highlight={searchQuery} /></span>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )
+                                : (
+                                    <span className="text-text-secondary"><Highlighter text={String(value)} highlight={searchQuery} /></span>
+                                )
+                            }
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+        
         return <p className={textSize}><Highlighter text={String(data)} highlight={searchQuery} /></p>;
     };
 

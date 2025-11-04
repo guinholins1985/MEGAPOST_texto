@@ -1,3 +1,4 @@
+
 import type { ContentCategory, GeneratedContent } from './types';
 
 export const CONTENT_CATEGORIES: ContentCategory[] = [
@@ -7,7 +8,7 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
         items: [
             { id: 'persuasiveDescriptions', label: 'Descrições Persuasivas (2-5)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.persuasiveDescriptions },
             { id: 'catchyHeadlines', label: 'Títulos Chamativos (10-15)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.catchyHeadlines },
-            { id: 'paidAdCopy', label: 'Copy para Anúncios Pagos (5-10)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.paidAdCopy },
+            { id: 'paidAdCopy', label: 'Copy para Anúncios Pagos (com Score)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.paidAdCopy },
             { id: 'benefitsVsFeatures', label: 'Benefícios vs. Recursos', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.benefitsVsFeatures },
             { id: 'ctas', label: 'Call-to-Actions (CTAs) (5-10)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.ctas },
             { id: 'promotionalSalePhrases', label: 'Frases Promocionais de Venda (10-15)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.promotionalSalePhrases },
@@ -26,14 +27,23 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
         items: [
             { id: 'marketplacePricing', label: 'Preços para Marketplaces', accessor: (c: GeneratedContent) => c.salesAndConversion.marketplacePricing },
             { id: 'competitorPriceAnalysis', label: 'Análise de Preço da Concorrência', accessor: (c: GeneratedContent) => c.salesAndConversion.competitorPriceAnalysis },
+            { id: 'pricePositioning', label: 'Comparação de Preços e Posicionamento', accessor: (c: GeneratedContent) => c.salesAndConversion.pricePositioning },
             { id: 'priceVariations', label: 'Variações de Preço e Descontos (3–5)', accessor: (c: GeneratedContent) => c.salesAndConversion.priceVariations },
             { id: 'competitorComparisons', label: 'Comparativos com Concorrentes (1-3)', accessor: (c: GeneratedContent) => c.salesAndConversion.competitorComparisons },
             { id: 'discountCoupons', label: 'Cupons de Desconto (5–10)', accessor: (c: GeneratedContent) => c.salesAndConversion.discountCoupons },
+            { id: 'suggestedCategoriesAndTags', label: 'Sugestão de Categorias e Tags', accessor: (c: GeneratedContent) => c.salesAndConversion.suggestedCategoriesAndTags },
             { id: 'promotionalPopups', label: 'Textos para Pop-ups (3–5)', accessor: (c: GeneratedContent) => c.salesAndConversion.promotionalPopups },
             { id: 'promotionCountdowns', label: 'Contagens Regressivas (1–3)', accessor: (c: GeneratedContent) => c.salesAndConversion.promotionCountdowns },
             { id: 'campaignLandingPages', label: 'Conteúdo para Landing Pages (1-2)', accessor: (c: GeneratedContent) => c.salesAndConversion.campaignLandingPages },
             { id: 'serviceChatbots', label: 'Scripts para Chatbots (1–2)', accessor: (c: GeneratedContent) => c.salesAndConversion.serviceChatbots },
             { id: 'interactiveQuizzes', label: 'Quizzes Interativos (2–3)', accessor: (c: GeneratedContent) => c.salesAndConversion.interactiveQuizzes },
+        ],
+    },
+    {
+        id: 'customerFeedback',
+        title: 'Análise de Feedback',
+        items: [
+            { id: 'sentimentAnalysis', label: 'Análise de Sentimento de Avaliações', accessor: (c: GeneratedContent) => c.customerFeedback.sentimentAnalysis },
         ],
     },
     {

@@ -1,6 +1,6 @@
-
 import React, { useState, useMemo } from 'react';
 import { Modal } from './Modal';
+import type { PerformanceReport } from '../types';
 
 // Icons
 const ClipboardIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -18,6 +18,16 @@ const DownloadIcon = (props: React.SVGProps<SVGSVGElement>) => (
 const CheckIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
 );
+const ThumbsUpIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M6.633 10.25c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 0 1 2.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 0 0 .322-1.672V2.75a.75.75 0 0 1 .75-.75 2.25 2.25 0 0 1 2.25 2.25c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 0 1-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 0 0-1.423-.23H5.904m10.59-11.25h.008v.008h-.008V8.25Z" /></svg>
+);
+const WrenchIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.878-5.878m0 0L21 5.64l-2.121-2.121L5.638 21l-2.122-2.121L11.42 11.42Zm0 0L5.638 5.636l2.122-2.121L17.25 11.42l-2.121 2.121Z" /></svg>
+);
+const StarIcon = (props: React.SVGProps<SVGSVGElement>) => (
+     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" /></svg>
+);
+
 
 const Highlighter: React.FC<{ text: string; highlight: string }> = React.memo(({ text, highlight }) => {
     if (!text || !highlight.trim()) {
@@ -116,6 +126,64 @@ const ActionButton: React.FC<{ tooltip: string, onClick: () => void, children: R
     </div>
 );
 
+const PerformanceReportDisplay: React.FC<{ report: PerformanceReport; searchQuery: string, isModal?: boolean }> = ({ report, searchQuery, isModal = false }) => {
+    const score = report.overallScore || 0;
+    const getScoreColor = (s: number) => {
+        if (s >= 80) return 'text-emerald-500';
+        if (s >= 60) return 'text-yellow-500';
+        return 'text-red-500';
+    };
+    
+    const textSize = isModal ? 'text-base' : 'text-sm';
+
+    return (
+        <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 text-center sm:text-left">
+                <div className="relative w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0">
+                    <svg className="w-full h-full" viewBox="0 0 36 36">
+                        <path className="text-slate-200" strokeWidth="3" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        <path className={`${getScoreColor(score)} transition-all duration-500`} strokeWidth="3" strokeDasharray={`${score}, 100`} strokeLinecap="round" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                    </svg>
+                    <div className={`absolute inset-0 flex items-center justify-center font-extrabold text-3xl sm:text-4xl ${getScoreColor(score)}`}>
+                        {score}
+                    </div>
+                </div>
+                <div>
+                    <h5 className="font-bold text-lg text-text-primary">Pontuação Geral</h5>
+                    <p className={`text-text-secondary ${textSize}`}>Uma estimativa do potencial de sucesso do seu conteúdo de marketing.</p>
+                </div>
+            </div>
+
+            <div className="space-y-4">
+                <div>
+                    <h6 className="font-semibold text-emerald-600 flex items-center gap-2 mb-2">
+                        <ThumbsUpIcon className="w-5 h-5" /> Pontos Fortes
+                    </h6>
+                    <ul className={`list-disc list-inside space-y-1 ${textSize} text-text-secondary`}>
+                        {report.strengths.map((item, index) => <li key={index}><Highlighter text={item} highlight={searchQuery} /></li>)}
+                    </ul>
+                </div>
+                <div>
+                    <h6 className="font-semibold text-amber-600 flex items-center gap-2 mb-2">
+                        <WrenchIcon className="w-5 h-5" /> Áreas de Melhoria
+                    </h6>
+                    <ul className={`list-disc list-inside space-y-1 ${textSize} text-text-secondary`}>
+                        {report.areasForImprovement.map((item, index) => <li key={index}><Highlighter text={item} highlight={searchQuery} /></li>)}
+                    </ul>
+                </div>
+                <div>
+                     <h6 className="font-semibold text-sky-600 flex items-center gap-2 mb-2">
+                        <StarIcon className="w-5 h-5" /> Anúncio Destaque
+                    </h6>
+                    <blockquote className={`border-l-4 border-sky-300 pl-4 italic ${textSize} text-text-secondary bg-sky-50 py-2`}>
+                       <Highlighter text={report.bestPerformingAd} highlight={searchQuery} />
+                    </blockquote>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQuery }) => {
     const [copiedTooltip, setCopiedTooltip] = useState('Copiar');
     const [isZoomed, setIsZoomed] = useState(false);
@@ -145,6 +213,11 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQue
         }
         
         const textSize = isModal ? 'text-base' : 'text-sm';
+        
+        // Custom renderer for Performance Report
+        if (title === 'Resumo da Performance' && typeof data === 'object' && data !== null) {
+            return <PerformanceReportDisplay report={data as PerformanceReport} searchQuery={searchQuery} isModal={isModal} />;
+        }
 
         if (Array.isArray(data)) {
             return (
@@ -155,7 +228,7 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQue
                            {typeof item === 'object' && item !== null && (
                                <div className="space-y-1.5">
                                    {Object.entries(item).map(([key, value]) => {
-                                        if (key === 'score' && typeof value === 'number') {
+                                        if ((key === 'score' || key === 'overallScore') && typeof value === 'number') {
                                             return <div key={key} className="flex items-start"><strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{key}: </strong><ScoreDisplay score={value} /></div>
                                         }
                                         if (key === 'sentiment' && typeof value === 'string') {
@@ -179,32 +252,42 @@ export const ContentCard: React.FC<ContentCardProps> = ({ title, data, searchQue
         if (typeof data === 'object' && data !== null) {
             return (
                  <div className={`space-y-4 ${textSize}`}>
-                    {Object.entries(data).map(([key, value]) => (
-                        <div key={key}>
-                            <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
-                            {Array.isArray(value) 
-                                ? (
-                                    <ul className="pl-0 mt-2 space-y-3">
-                                        {value.map((subItem, index) => (
-                                            <li key={index} className="text-text-primary bg-base-200 p-2 sm:p-3 rounded-md border border-base-300">
-                                                <div className="space-y-1.5">
-                                                    {Object.entries(subItem).map(([subKey, subValue]) => (
-                                                        <div key={subKey} className="flex items-start">
-                                                            <strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{subKey}: </strong>
-                                                            <span className="text-text-secondary"><Highlighter text={String(subValue)} highlight={searchQuery} /></span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                )
-                                : (
-                                    <span className="text-text-secondary"><Highlighter text={String(value)} highlight={searchQuery} /></span>
-                                )
-                            }
-                        </div>
-                    ))}
+                    {Object.entries(data).map(([key, value]) => {
+                        if ((key === 'overallScore' || key === 'score') && typeof value === 'number') {
+                            return (
+                                <div key={key}>
+                                    <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
+                                    <div className="mt-1"><ScoreDisplay score={value} /></div>
+                                </div>
+                            );
+                        }
+                        return (
+                            <div key={key}>
+                                <strong className="font-semibold text-sky-500 capitalize">{key}: </strong>
+                                {Array.isArray(value) 
+                                    ? (
+                                        <ul className="pl-0 mt-2 space-y-3">
+                                            {value.map((subItem, index) => (
+                                                <li key={index} className="text-text-primary bg-base-200 p-2 sm:p-3 rounded-md border border-base-300">
+                                                    <div className="space-y-1.5">
+                                                        {Object.entries(subItem).map(([subKey, subValue]) => (
+                                                            <div key={subKey} className="flex items-start">
+                                                                <strong className="w-24 flex-shrink-0 font-semibold text-sky-500 capitalize">{subKey}: </strong>
+                                                                <span className="text-text-secondary"><Highlighter text={String(subValue)} highlight={searchQuery} /></span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )
+                                    : (
+                                        <span className="text-text-secondary"><Highlighter text={String(value)} highlight={searchQuery} /></span>
+                                    )
+                                }
+                            </div>
+                        )
+                    })}
                 </div>
             )
         }

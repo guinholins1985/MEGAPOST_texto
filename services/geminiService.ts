@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 import type { GeneratedContent } from '../types';
 
@@ -29,7 +28,7 @@ const fileToGenerativePart = async (file: File) => {
 
 const buildPrompt = async (image: File | null, url: string) => {
     const promptParts: any[] = [
-        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto completo de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Se for um produto conhecido, use seu conhecimento da web para extrair informações relevantes. Gere também respostas para comentários negativos, textos para stories, descrições para vídeos no YouTube, sequências de e-mail para nutrição de leads e textos para embalagens. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns, e faça uma análise de preço em relação a possíveis concorrentes. Adicionalmente, gere uma análise de sentimento para possíveis comentários de clientes, classifique os anúncios criados com um score de potencial de venda, sugira categorias de e-commerce com tags, e crie uma análise de posicionamento de preço. Siga estritamente o schema JSON fornecido para a sua resposta." }
+        { text: "Você é um especialista em marketing digital e copywriting. Analise o produto fornecido e gere um conjunto robusto e extenso de conteúdo de marketing em português do Brasil. O conteúdo deve ser criativo, profissional e altamente otimizado para vendas e engajamento. Gere uma quantidade maior de conteúdo, especialmente para descrições persuasivas, tags, hashtags e títulos. Utilize seu conhecimento mais recente da web para realizar uma análise de concorrentes e basear as sugestões de preço em dados atuais. Gere também respostas para comentários negativos, textos para stories, descrições para vídeos no YouTube, sequências de e-mail para nutrição de leads e textos para embalagens. Calcule também o preço de venda para marketplaces como Shopee, Mercado Livre, Amazon e OLX, considerando taxas comuns. Adicionalmente, gere uma análise de sentimento para possíveis comentários de clientes, classifique os anúncios criados com um score de potencial de venda, sugira categorias de e-commerce com tags, e crie uma análise de posicionamento de preço. Finalmente, gere um relatório de performance conciso, incluindo um score geral, pontos fortes, áreas de melhoria e destacando o anúncio de melhor performance. Siga estritamente o schema JSON fornecido para a sua resposta." }
     ];
 
     if (image) {
@@ -48,15 +47,25 @@ const buildPrompt = async (image: File | null, url: string) => {
 const getResponseSchema = () => ({
     type: Type.OBJECT,
     properties: {
+        performanceReport: {
+            type: Type.OBJECT,
+            properties: {
+                overallScore: { type: Type.NUMBER, description: "Uma pontuação geral de 0 a 100 para o potencial de marketing do conteúdo gerado." },
+                strengths: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Uma lista de pontos fortes do conteúdo gerado (2-3 pontos)." },
+                areasForImprovement: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Uma lista de áreas para melhoria ou sugestões adicionais (2-3 pontos)." },
+                bestPerformingAd: { type: Type.STRING, description: "O texto do anúncio com o maior score de 'paidAdCopy', para destaque." },
+            },
+            description: "Um relatório de performance que resume a qualidade e o potencial do conteúdo gerado."
+        },
         seoAndBlog: {
             type: Type.OBJECT,
             properties: {
-                seoTitles: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos otimizados para SEO (10–15)" },
-                seoTags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Tags SEO relevantes (20–30)" },
+                seoTitles: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos otimizados para SEO (15-20)" },
+                seoTags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Tags SEO relevantes (50-60)" },
                 metaTagsAndAltText: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Meta tags e alt text para imagens (5–10)" },
                 faq: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { question: { type: Type.STRING }, answer: { type: Type.STRING } } }, description: "Perguntas frequentes (FAQ) automáticas (5–10)" },
                 longTailKeywords: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Keywords long-tail sugeridas (10–15)" },
-                seoBlogPosts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Artigos para blog otimizados para SEO (1–2)" },
+                seoBlogPosts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Artigos para blog otimizados para SEO (2-3)" },
                 metaDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Meta descriptions otimizadas (3-5)" },
                 blogPostIntroductions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Introduções que prendem a atenção para artigos de blog (2-4)" },
                 blogPostConclusions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Conclusões para artigos com chamadas para ação (CTAs) (2-4)" },
@@ -65,9 +74,9 @@ const getResponseSchema = () => ({
         socialMediaAndEngagement: {
             type: Type.OBJECT,
             properties: {
-                popularHashtags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Hashtags populares (20–30)" },
+                popularHashtags: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Hashtags populares (50-60)" },
                 socialMediaPosts: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases para postagens em redes sociais (10–15)" },
-                shortVideoScripts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, script: { type: Type.STRING } } }, description: "Scripts para vídeos curtos (Reels/TikTok) (2–3)" },
+                shortVideoScripts: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, script: { type: Type.STRING } } }, description: "Scripts para vídeos curtos (Reels/TikTok) (4-5)" },
                 instagramBio: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Bio para Instagram/TikTok (1–3)" },
                 viralPhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases virais (5–10)" },
                 instagramCaptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Legendas para posts no Instagram (3–5)" },
@@ -80,11 +89,11 @@ const getResponseSchema = () => ({
         copywritingAndAdvertising: {
             type: Type.OBJECT,
             properties: {
-                persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições persuasivas com benefícios (2–5)" },
+                persuasiveDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições persuasivas com benefícios (8-12)" },
                 promotionalSalePhrases: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Frases promocionais de venda (10–15)" },
                 paidAdCopy: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { ad: { type: Type.STRING }, score: { type: Type.NUMBER }, justification: { type: Type.STRING } } }, description: "Copy para anúncios pagos com score de potencial de venda (0-100) e justificativa (5–10)" },
-                slogans: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Slogans publicitários (5–10)" },
-                catchyHeadlines: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos (10–15)" },
+                slogans: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Slogans publicitários (10–15)" },
+                catchyHeadlines: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Títulos chamativos (15-20)" },
                 ctas: { type: Type.ARRAY, items: { type: Type.STRING }, description: "CTA automático (5–10)" },
                 alternativeAdTitles: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { tone: { type: Type.STRING, description: "Tom do anúncio (ex: urgente, emocional, racional)" }, title: { type: Type.STRING } } }, description: "Títulos alternativos para anúncios (3-5)" },
                 technicalDescriptions: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Descrições técnicas detalhadas (1-2)" },
@@ -149,8 +158,8 @@ const getResponseSchema = () => ({
         other: {
             type: Type.OBJECT,
             properties: {
-                fakeTestimonials: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { author: { type: Type.STRING }, text: { type: Type.STRING } } }, description: "Depoimentos fictícios gerados por IA (2–3)" },
-                purchaseGuides: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Guias de compra comparativos (1–2)" },
+                fakeTestimonials: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { author: { type: Type.STRING }, text: { type: Type.STRING } } }, description: "Depoimentos fictícios gerados por IA (4-6)" },
+                purchaseGuides: { type: Type.ARRAY, items: { type: Type.OBJECT, properties: { title: { type: Type.STRING }, content: { type: Type.STRING } } }, description: "Guias de compra comparativos (2-4)" },
             },
         },
         customerFeedback: {

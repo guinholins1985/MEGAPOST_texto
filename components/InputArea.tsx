@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 
 interface InputAreaProps {
     onGenerate: (image: File | null, url: string) => void;
@@ -17,11 +17,24 @@ const LinkIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
     </svg>
 );
 
+const SparklesIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456Z" />
+    </svg>
+);
+
+
 export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) => {
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imageUrl, setImageUrl] = useState<string>('');
     const [productUrl, setProductUrl] = useState<string>('');
     const [dragActive, setDragActive] = useState(false);
+    const [isInputAvailable, setIsInputAvailable] = useState(false);
+
+    useEffect(() => {
+        const isValidUrl = productUrl.startsWith('http://') || productUrl.startsWith('https://');
+        setIsInputAvailable(!!imageFile || isValidUrl);
+    }, [imageFile, productUrl]);
 
     const handleFileChange = useCallback((files: FileList | null) => {
         if (isLoading || !files || files.length === 0) return;
@@ -33,8 +46,7 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
         }
         setImageFile(file);
         setImageUrl(URL.createObjectURL(file));
-        onGenerate(file, productUrl);
-    }, [isLoading, onGenerate, productUrl]);
+    }, [isLoading]);
     
     const handleDrag = useCallback((e: React.DragEvent) => {
         e.preventDefault();
@@ -55,25 +67,15 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
         }
     }, [handleFileChange]);
 
-    const handleUrlBlur = () => {
-        if (isLoading) return;
-        
-        const isValidUrl = productUrl.startsWith('http://') || productUrl.startsWith('https://');
-
-        // Trigger only if there's a valid URL, or if an image exists.
-        // This prevents triggering on blur with an empty/invalid URL when no image is present.
-        if (isValidUrl || imageFile) {
-             onGenerate(imageFile, productUrl);
+    const handleSubmit = () => {
+        if (!isLoading && isInputAvailable) {
+            onGenerate(imageFile, productUrl);
         }
     };
     
     const resetImage = () => {
         setImageFile(null);
         setImageUrl('');
-        const isValidUrl = productUrl.startsWith('http://') || productUrl.startsWith('https://');
-        if (isValidUrl) {
-            onGenerate(null, productUrl);
-        }
     }
 
     return (
@@ -120,7 +122,6 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                             type="url"
                             value={productUrl}
                             onChange={(e) => setProductUrl(e.target.value)}
-                            onBlur={handleUrlBlur}
                             placeholder="https://sua-loja.com/produto"
                             className="w-full pl-10 pr-4 py-3 bg-slate-100 border border-transparent rounded-md focus:ring-2 focus:ring-brand-primary focus:border-brand-primary focus:shadow-inner focus:bg-base-200 outline-none transition duration-200"
                             disabled={isLoading}
@@ -128,8 +129,16 @@ export const InputArea: React.FC<InputAreaProps> = ({ onGenerate, isLoading }) =
                     </div>
                 </div>
             </div>
-            <div className="text-center text-sm text-text-secondary pt-4 border-t border-base-300/60">
-                <p>A geração de conteúdo começará automaticamente ao adicionar uma imagem ou um link válido.</p>
+            
+            <div className="pt-6 border-t border-base-300/60">
+                <button
+                    onClick={handleSubmit}
+                    disabled={!isInputAvailable || isLoading}
+                    className="w-full max-w-sm mx-auto flex items-center justify-center gap-3 text-lg font-bold text-white bg-gradient-to-r from-brand-primary to-brand-secondary rounded-lg px-8 py-4 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 disabled:shadow-lg animate-pulse-glow"
+                >
+                    <SparklesIcon className="w-6 h-6"/>
+                    <span>Gerar Conteúdo Mágico</span>
+                </button>
             </div>
         </div>
     );

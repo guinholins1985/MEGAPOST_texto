@@ -1,18 +1,24 @@
-
 import type { ContentCategory, GeneratedContent } from './types';
 
 export const CONTENT_CATEGORIES: ContentCategory[] = [
     {
+        id: 'performanceReport',
+        title: 'Relatório de Performance',
+        items: [
+            { id: 'performanceSummary', label: 'Resumo da Performance', accessor: (c: GeneratedContent) => c.performanceReport },
+        ],
+    },
+    {
         id: 'copywritingAndAdvertising',
         title: 'Copywriting e Publicidade',
         items: [
-            { id: 'persuasiveDescriptions', label: 'Descrições Persuasivas (2-5)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.persuasiveDescriptions },
-            { id: 'catchyHeadlines', label: 'Títulos Chamativos (10-15)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.catchyHeadlines },
+            { id: 'persuasiveDescriptions', label: 'Descrições Persuasivas (8-12)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.persuasiveDescriptions },
+            { id: 'catchyHeadlines', label: 'Títulos Chamativos (15-20)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.catchyHeadlines },
             { id: 'paidAdCopy', label: 'Copy para Anúncios Pagos (com Score)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.paidAdCopy },
             { id: 'benefitsVsFeatures', label: 'Benefícios vs. Recursos', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.benefitsVsFeatures },
             { id: 'ctas', label: 'Call-to-Actions (CTAs) (5-10)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.ctas },
             { id: 'promotionalSalePhrases', label: 'Frases Promocionais de Venda (10-15)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.promotionalSalePhrases },
-            { id: 'slogans', label: 'Slogans Publicitários (5-10)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.slogans },
+            { id: 'slogans', label: 'Slogans Publicitários (10-15)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.slogans },
             { id: 'alternativeAdTitles', label: 'Títulos Alternativos para Anúncios', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.alternativeAdTitles },
             { id: 'remarketingPhrases', label: 'Frases para Remarketing (3-5)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.remarketingPhrases },
             { id: 'technicalDescriptions', label: 'Descrições Técnicas Detalhadas (1-2)', accessor: (c: GeneratedContent) => c.copywritingAndAdvertising.technicalDescriptions },
@@ -52,8 +58,8 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
         items: [
             { id: 'socialMediaPosts', label: 'Frases para Posts (10-15)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.socialMediaPosts },
             { id: 'instagramCaptions', label: 'Legendas para Instagram (3-5)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.instagramCaptions },
-            { id: 'popularHashtags', label: 'Hashtags Populares (20-30)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.popularHashtags },
-            { id: 'shortVideoScripts', label: 'Scripts para Vídeos Curtos (2-3)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.shortVideoScripts },
+            { id: 'popularHashtags', label: 'Hashtags Populares (50-60)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.popularHashtags },
+            { id: 'shortVideoScripts', label: 'Scripts para Vídeos Curtos (4-5)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.shortVideoScripts },
             { id: 'youtubeVideoDescriptions', label: 'Descrições para Vídeos no YouTube (2-3)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.youtubeVideoDescriptions },
             { id: 'storyTexts', label: 'Textos para Stories (Enquetes, Perguntas) (3-5)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.storyTexts },
             { id: 'tweets', label: 'Tweets Prontos (3-5)', accessor: (c: GeneratedContent) => c.socialMediaAndEngagement.tweets },
@@ -66,12 +72,12 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
         id: 'seoAndBlog',
         title: 'SEO e Conteúdo para Blogs',
         items: [
-            { id: 'seoTitles', label: 'Títulos SEO (10-15)', accessor: (c: GeneratedContent) => c.seoAndBlog.seoTitles },
+            { id: 'seoTitles', label: 'Títulos SEO (15-20)', accessor: (c: GeneratedContent) => c.seoAndBlog.seoTitles },
             { id: 'metaDescriptions', label: 'Meta Descriptions Otimizadas (3-5)', accessor: (c: GeneratedContent) => c.seoAndBlog.metaDescriptions },
-            { id: 'seoTags', label: 'Tags SEO Relevantes (20-30)', accessor: (c: GeneratedContent) => c.seoAndBlog.seoTags },
+            { id: 'seoTags', label: 'Tags SEO Relevantes (50-60)', accessor: (c: GeneratedContent) => c.seoAndBlog.seoTags },
             { id: 'longTailKeywords', label: 'Keywords Long-Tail (10-15)', accessor: (c: GeneratedContent) => c.seoAndBlog.longTailKeywords },
             { id: 'faq', label: 'Perguntas Frequentes (FAQ) (5-10)', accessor: (c: GeneratedContent) => c.seoAndBlog.faq },
-            { id: 'seoBlogPosts', label: 'Artigos para Blog Otimizados (1-2)', accessor: (c: GeneratedContent) => c.seoAndBlog.seoBlogPosts },
+            { id: 'seoBlogPosts', label: 'Artigos para Blog Otimizados (2-3)', accessor: (c: GeneratedContent) => c.seoAndBlog.seoBlogPosts },
             { id: 'blogPostIntroductions', label: 'Introduções para Artigos de Blog (2-4)', accessor: (c: GeneratedContent) => c.seoAndBlog.blogPostIntroductions },
             { id: 'blogPostConclusions', label: 'Conclusões para Artigos com CTA (2-4)', accessor: (c: GeneratedContent) => c.seoAndBlog.blogPostConclusions },
             { id: 'metaTagsAndAltText', label: 'Meta Tags e Alt Text (5-10)', accessor: (c: GeneratedContent) => c.seoAndBlog.metaTagsAndAltText },
@@ -93,8 +99,8 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
         id: 'other',
         title: 'Outros Conteúdos',
         items: [
-            { id: 'fakeTestimonials', label: 'Depoimentos Fictícios (2-3)', accessor: (c: GeneratedContent) => c.other.fakeTestimonials },
-            { id: 'purchaseGuides', label: 'Guias de Compra Comparativos (1-2)', accessor: (c: GeneratedContent) => c.other.purchaseGuides },
+            { id: 'fakeTestimonials', label: 'Depoimentos Fictícios (4-6)', accessor: (c: GeneratedContent) => c.other.fakeTestimonials },
+            { id: 'purchaseGuides', label: 'Guias de Compra Comparativos (2-4)', accessor: (c: GeneratedContent) => c.other.purchaseGuides },
         ],
     },
 ];

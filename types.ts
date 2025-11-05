@@ -1,4 +1,11 @@
 
+export interface PerformanceReport {
+  overallScore: number;
+  strengths: string[];
+  areasForImprovement: string[];
+  bestPerformingAd: string;
+}
+
 export interface GeneratedContent {
   seoAndBlog: {
     seoTitles: string[];
@@ -67,6 +74,7 @@ export interface GeneratedContent {
   customerFeedback: {
     sentimentAnalysis: { comment: string; sentiment: 'Positivo' | 'Negativo' | 'Neutro'; analysis: string; }[];
   };
+  performanceReport: PerformanceReport;
 }
 
 export interface ContentCategory {
